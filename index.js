@@ -50,20 +50,19 @@ user.updateOne({ first_name: 'Bom' }, { first_name: 'Tom' }, (err, res)=> { //up
 //an example of getting data and import it to an array
 users = []
 user.find({ first_name: "Tom" }) 
-    .then(data => {
-        console.log("Database users:")
-        console.log(data);
-        data.map((d, k) => {
-            users.push(d._id);
-        })
-
-        users.forEach( (i) => { 
-            console.log(i);
-        });
+.then(data => {
+    console.log("Database users:")
+    console.log(data);
+    data.map((d, k) => {
+        users.push(d._id);
     })
-    .catch(error => {
-        console.log(error);
-    })
+    users.forEach( (i) => { 
+        console.log(i);
+    });
+})
+.catch(error => {
+    console.log(error);
+})
 
 
 
