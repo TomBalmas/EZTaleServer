@@ -6,11 +6,11 @@ const { Schema } = mongoose;
 const app = express();
 
 app.use(cors());
-
+const uri = "mongodb+srv://root2:1234@maincluster.eegqfie.mongodb.net/EZTale";
 
 //connection to DB
 async function connectToMongo() {
-    await mongoose.connect('mongodb://localhost:27017/EZTale');
+    await mongoose.connect(uri,{useNewUrlParser: true, useUnifiedTopology: true});
     console.log("Database connected successfully ")
 }
 connectToMongo().catch(err => console.log(err)).then(() => {
@@ -19,50 +19,51 @@ connectToMongo().catch(err => console.log(err)).then(() => {
     });
 });
 
-const testSchema = new Schema({first_name: String, last_name: String } ,{collection:"test"}) // this is how to use existing collection
 
-const user = mongoose.model('user', testSchema); //using a model on a specific collection ======= collection == schema
+const usersSchema = new Schema({first_name: String, last_name: String } ,{collection:"Users"}) // this is how to use existing collection
+const user = mongoose.model('user', usersSchema); //using a model on a specific collection ======= collection == schema
 
 app.get('/', (req, res) => {    
     res.send('Yes');
     console.log('GET sent');
   });
 
-user.create({ //create user
-    first_name:"Bohad",
-    last_name:"Lavi"
+ //create user
+ user.create({ 
+    first_name:"Tom",
+    last_name:"Balmas"
 });
 
 
-testSchema.add({gender:String}); //add field to schema 
-testSchema.remove({gender:String}); //remove field to schema
+//testSchema.add({gender:String}); //add field to schema 
+// testSchema.remove({gender:String}); //remove field to schema
 
-user.deleteOne({ first_name: 'Bohad' }, (err) => { //delete user
-    if (err) return handleError(err);
+// user.deleteOne({ first_name: 'Bohad' }, (err) => { //delete user
+//     if (err) return handleError(err);
     
-  });
+//   });
 
-user.updateOne({ first_name: 'Bom' }, { first_name: 'Tom' }, (err, res)=> { //update user
+//user.updateOne({ first_name: 'Bom' }, { first_name: 'Tom' }, (err, res)=> { //update user
 // Updated at most one doc, `res.nModified` contains the number
 // of docs that MongoDB updated
-});
+//});
 
 //an example of getting data and import it to an array
-users = []
-user.find({ first_name: "Tom" }) 
-.then(data => {
-    console.log("Database users:")
-    console.log(data);
-    data.map((d, k) => {
-        users.push(d._id);
-    })
-    users.forEach( (i) => { 
-        console.log(i);
-    });
-})
-.catch(error => {
-    console.log(error);
-})
+// users = []
+// user.find({ first_name: "Tom" }) 
+// .then(data => {
+//     console.log("Database users:")
+//     console.log(data);
+//     data.map((d, k) => {
+//         users.push(d._id);
+//     })
+//     users.forEach( (i) => { 
+//         console.log(i);
+//     });
+// })
+// .catch(error => {
+//     console.log(error);
+// })
 
 
 

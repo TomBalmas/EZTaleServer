@@ -1,5 +1,6 @@
 # ignore ALL .log files
 *.log
 
-# ignore ALL modules files 
+# ignore ALL modules files  and package-lock json file
 node_modules/
+package-lock.json
