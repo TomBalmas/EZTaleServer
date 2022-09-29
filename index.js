@@ -28,6 +28,11 @@ app.get('/', (req, res) => {
     console.log('GET sent');
   });
 
+app.route('/register').post((req,res) => {
+    console.log(req);
+    res.send('yes');
+});
+
  //create user
  user.create({ 
     first_name:"Tom",
