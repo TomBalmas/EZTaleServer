@@ -18,6 +18,9 @@ router.post('/adduser', actions.addNew);
 router.post('/auth', actions.authenticate);
 //@desc Get user info
 //@route GET /getinfo
-router.get('/getinfo',actions.getInfo)
+router.get('/getinfo',actions.getInfo);
+//@desc Add new entity
+//@route POST /entites/addentitiy
+router.post('/entites/addentity',actions.addEntity);
 
 module.exports = router;
