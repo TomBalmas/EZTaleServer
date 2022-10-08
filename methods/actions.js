@@ -2,6 +2,7 @@ var User = require('../models/user');
 var jwt = require('jwt-simple');
 var config = require('../config/dbconfig');
 const Entity = require('../models/entity');
+const { model, default: mongoose } = require('mongoose');
 
 var functions = {
     addNew: function(req, res) { 
@@ -36,7 +37,7 @@ var functions = {
                 user.comparePassword(req.body.password, function (err,isMatch) { 
                     if(isMatch && !err) { 
                         var token = jwt.encode(user, config.secret);
-                        res.json({success: true, token: token})
+                        res.json({success: true, token: token});
                     }
                     else { 
                         return res.status(403).send({success: false, msg:'Auth Failed, Wrong password'});
@@ -56,16 +57,17 @@ var functions = {
         }
     },
     addEntity: function(req, res) { 
+        modelEntity = mongoose.model('Entity',Entity)
+
         // character,
         // location,
         // conversation,
         // storyEvent,
         // userDefined,
         // atrributeTemplate,
-        if(err) throw err;
         switch (req.body.type) { 
             case 'character': 
-                newEntity.add({
+                Entity.add({
                     surename: {
                         type: String,
                         required : false
@@ -87,49 +89,87 @@ var functions = {
                         required: true
                     }
                 });
+                var newEntity = modelEntity({
+                    type: req.body.type,
+                    picture: req.body.picture,
+                    name: req.body.name,
+                    relations: req.body.relations,
+                    surename: req.body.surename,
+                    personalityTraits: req.body.personalityTraits,
+                    appearanceTraits: req.body.age,
+                    gender: req.body.gender
+                });
                 break;
             case 'location':
-                newEntity.add({
+                Entity.add({
                     vista: { 
                         type: String,
                         required: false
                     }
                 });
+                var newEntity = modelEntity({
+                    type: req.body.type,
+                    picture: req.body.picture,
+                    name: req.body.name,
+                    relations: req.body.relations,
+                    vista:req.body.vista
+                });
                 break;
             case 'conversation':
-                newEntity.add({
+                Entity.add({
                     participants: { 
                         type: Array,
                         required:True
                     }
                 });
+                var newEntity = modelEntity({
+                    type: req.body.type,
+                    picture: req.body.picture,
+                    name: req.body.name,
+                    relations: req.body.relations,
+                    participants: req.body.participants
+                });
                 break;
             case 'storyEvent':
-                newEntity.add({
+                Entity.add({
                     desc: {
                         type: String,
                         required: false
                     }
                 })
+                var newEntity = modelEntity({
+                    type: req.body.type,
+                    picture: req.body.picture,
+                    name: req.body.name,
+                    relations: req.body.relations,
+                    desc: req.body.desc
+                });
                 break;
             // TODO: Add more entitiy like user defined and templates 
         }
-
-
-
-        var newEntity = Entity({
-            type: req.body.type,
-            picture: req.body.picture,
-            name: req.body.name,
-            relations: req.body.relations
-        });
-        newEntity.save(function(err, newUser) { 
-            if (err) 
-                res.json({success: false, msg: 'Failed to save'});
-            else 
-                res.json({success: true, msg: 'Successfully saved'});
-        });
+        if(newEntity)
+            newEntity.save(function(err, newEntity) { 
+                if (err) 
+                    res.json({success: false, msg: 'Failed to save' + err});
+                else 
+                    res.json({success: true, msg: 'Successfully saved'});
+            });
+        else
+            res.json({success: false, msg: 'Failed to save no user created'});
+    },
+    getEntity: function(req, res) { 
+        modelEntity = mongoose.model('Entity',Entity)
+        if(req.headers.name)
+            modelEntity.findOne({name: req.headers.name},function (err, ent) {
+                if (err) throw err;
+                if(!ent) 
+                    res.status(403).send({success:false, msg: 'Entity not found'});
+                else 
+                    res.json(ent);
+            });
     }
+
+
 }
 
 module.exports = functions;

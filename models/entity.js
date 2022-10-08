@@ -1,16 +1,16 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var entityTypes = {
-    
-};
-
 var entitySchema = new Schema({ 
+    book: { 
+        type: String,
+        required: true
+    },
     type: {
         type: String,
         required: true
     },
     picture: {
-        type: Image,
+        type: String,
         required: false
     },
     name: { 
@@ -28,14 +28,10 @@ var entitySchema = new Schema({
 });
 
 
-
 entitySchema.pre('save',function (next) { 
     var entity = this;
-    if (err)
-        return next(err);
-    else  
         return next();
-    
 });
 
-module.exports = mongoose.model('Entity', entitySchema), entityTypes;
+//module.exports = mongoose.model('Entity', entitySchema);
+module.exports = entitySchema

@@ -20,7 +20,10 @@ router.post('/auth', actions.authenticate);
 //@route GET /getinfo
 router.get('/getinfo',actions.getInfo);
 //@desc Add new entity
-//@route POST /entites/addentitiy
-router.post('/entites/addentity',actions.addEntity);
+//@route POST /entities/addentitiy
+router.post('/entities/addentity',actions.addEntity);
+//@desc Get Entity
+//@route GET /entities/getentitiy
+router.get('/entities/getentity',actions.getEntity);
 
 module.exports = router;

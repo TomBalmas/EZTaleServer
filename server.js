@@ -27,10 +27,6 @@ require('./config/passport')(passport)
 const port = process.env.PORT || 3000;
 app.listen(port, console.log(`EZTale server listening in ${process.env.NODE_ENV} mode and port ${port}`));
 
-//51:38
-
-
-
 
 
 // const usersSchema = new Schema({first_name: String, last_name: String } ,{collection:"Users"}) // this is how to use existing collection
