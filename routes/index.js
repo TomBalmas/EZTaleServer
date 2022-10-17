@@ -19,6 +19,12 @@ router.post('/auth', actions.authenticate);
 //@desc Get user info
 //@route GET /getinfo
 router.get('/getinfo',actions.getInfo);
+//@desc Get email for check if exists 
+//@route GET /getemail
+router.get('/getemail',actions.getEmail);
+//@desc Get username for check if exists 
+//@route GET /getusername
+router.get('/getusername',actions.getUsername);
 //@desc Add new entity
 //@route POST /entities/addentitiy
 router.post('/entities/addentity',actions.addEntity);

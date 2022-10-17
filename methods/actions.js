@@ -13,7 +13,7 @@ var functions = {
             var newUser = User({
                 name: req.body.name,
                 surname: req.body.surname,
-                username: req.body.usermame,
+                username: req.body.username,
                 email: req.body.email,
                 password: req.body.password
             });
@@ -56,6 +56,33 @@ var functions = {
             return res.json({success: false, msg:'No Headers'});
         }
     },
+    getEmail: function(req, res) { 
+        if(req.headers.email){
+            User.findOne({email: req.headers.email},function (err, user){
+                if(err) throw err;
+                if(user) 
+                    return res.json({success: true, msg: 'Email Found: ' + user.email});
+                else
+                    return res.json({success: true, msg: 'Email Not Found'})
+            });  
+        }
+        else 
+            return res.json({success: false, msg:'No Headers'});
+    },
+    getUsername: function(req, res) { 
+        if(req.headers.username){
+            User.findOne({username: req.headers.username},function (err, user){
+                if(err) throw err;
+                if(user) 
+                    return res.json({success: true, msg: 'UserName Found: ' + user.username});
+                else
+                    return res.json({success: true, msg: 'UserName Not Found'})
+            });  
+        }
+        else 
+            return res.json({success: false, msg:'No Headers'});
+
+    },
     addEntity: function(req, res) { 
         modelEntity = mongoose.model('Entity',Entity)
 
@@ -90,6 +117,7 @@ var functions = {
                     }
                 });
                 var newEntity = modelEntity({
+                    book: req.body.book,
                     type: req.body.type,
                     picture: req.body.picture,
                     name: req.body.name,
@@ -108,6 +136,7 @@ var functions = {
                     }
                 });
                 var newEntity = modelEntity({
+                    book: req.body.book,
                     type: req.body.type,
                     picture: req.body.picture,
                     name: req.body.name,
@@ -123,6 +152,7 @@ var functions = {
                     }
                 });
                 var newEntity = modelEntity({
+                    book: req.body.book,
                     type: req.body.type,
                     picture: req.body.picture,
                     name: req.body.name,
@@ -138,6 +168,7 @@ var functions = {
                     }
                 })
                 var newEntity = modelEntity({
+                    book: req.body.book,
                     type: req.body.type,
                     picture: req.body.picture,
                     name: req.body.name,
@@ -145,6 +176,44 @@ var functions = {
                     desc: req.body.desc
                 });
                 break;
+            case 'attributeTemplate':
+                Entity.add({
+                    attributes: {
+                        type: String,
+                        required: false
+                    }
+                });
+                var newEntity = modelEntity({
+                    book: req.body.book,
+                    type: req.body.type,
+                    picture: req.body.picture,
+                    name: req.body.name,
+                    relations: req.body.relations,
+                    attributes:req.body.attributes
+                });
+                break;
+            case 'userDefined':
+                var atrrs  = req.body.attributes.split('|');
+                atrrs.forEach( (atr) => {
+                    Entity.add({
+                    [atr]: {
+                            type: String,
+                            required: false
+                        }
+                    });
+                });
+                var vals = req.body.values.split('|');
+                var userDef = new Map([
+                    ["book", req.body.book],
+                    ["type", req.body.type],
+                    ["picture", req.body.picture],
+                    ["name", req.body.name],
+                    ["relations",req.body.relations],
+                ]);
+                for(var i=0 ; i < atrrs.length; i++)
+                    userDef.set(atrrs[i],vals[i]);
+                var newEntity = modelEntity(Object.fromEntries(userDef));
+       
             // TODO: Add more entitiy like user defined and templates 
         }
         if(newEntity)
@@ -155,7 +224,7 @@ var functions = {
                     res.json({success: true, msg: 'Successfully saved'});
             });
         else
-            res.json({success: false, msg: 'Failed to save no user created'});
+            res.json({success: false, msg: 'Failed to save no entity created'});
     },
     getEntity: function(req, res) { 
         modelEntity = mongoose.model('Entity',Entity)
@@ -167,6 +236,7 @@ var functions = {
                 else 
                     res.json(ent);
             });
+
     }
 
 
