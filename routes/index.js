@@ -16,8 +16,6 @@ router.get('/', (req,res) => {
     res.send('Connected!');
 })
 
-
-
 //@desc Adding new user 
 //@route POST /adduser 
 //@body name, surname, username, email, password(as hash)

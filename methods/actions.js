@@ -5,7 +5,6 @@ const mongoose = require('mongoose');
 const Entity = require('../models/entity');
 const Story = require('../models/story');
 const fs = require('fs');
-const path = require('path');
 
 var functions = {
     addNewUser: function(req, res) { 
