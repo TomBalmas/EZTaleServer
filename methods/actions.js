@@ -1,11 +1,14 @@
 var User = require('../models/user');
 var jwt = require('jwt-simple');
 var config = require('../config/dbconfig');
+const mongoose = require('mongoose');
 const Entity = require('../models/entity');
-const { model, default: mongoose } = require('mongoose');
+const Story = require('../models/story');
+const fs = require('fs');
+const path = require('path');
 
 var functions = {
-    addNew: function(req, res) { 
+    addNewUser: function(req, res) { 
         if((!req.body.name)  || (!req.body.surname) || (!req.body.username) || (!req.body.password) || (!req.body.email) ) { 
             res.json({success: false, msg: 'Enter all fields'});
         }
@@ -213,8 +216,6 @@ var functions = {
                 for(var i=0 ; i < atrrs.length; i++)
                     userDef.set(atrrs[i],vals[i]);
                 var newEntity = modelEntity(Object.fromEntries(userDef));
-       
-            // TODO: Add more entitiy like user defined and templates 
         }
         if(newEntity)
             newEntity.save(function(err, newEntity) { 
@@ -227,9 +228,9 @@ var functions = {
             res.json({success: false, msg: 'Failed to save no entity created'});
     },
     getEntity: function(req, res) { 
-        modelEntity = mongoose.model('Entity',Entity)
-        if(req.headers.name)
-            modelEntity.findOne({name: req.headers.name},function (err, ent) {
+        modelEntity = mongoose.model('Entity',Entity);
+        if(req.headers.name && req.headers.book)
+            modelEntity.findOne({name: req.headers.name, book:req.headers.book},function (err, ent) {
                 if (err) throw err;
                 if(!ent) 
                     res.status(403).send({success:false, msg: 'Entity not found'});
@@ -237,9 +238,84 @@ var functions = {
                     res.json(ent);
             });
 
-    }
-
-
+    },
+    getAllEntities: function(req, res) { 
+        modelEntity = mongoose.model('Entity',Entity);
+        if(req.headers.book)
+            modelEntity.find({book: req.headers.book},function (err, entArr) {
+                if (entArr) throw err;
+                if(!entArr) 
+                    res.status(403).send({success:false, msg: 'Entities not found'});
+                else 
+                    res.json(entArr);
+            });
+    },
+    getAllUserDefinedEntities: function(req, res) { 
+        modelEntity = mongoose.model('Entity',Entity);
+        if(req.headers.book)
+            modelEntity.find({book: req.headers.book, type:'userDefined'},function (err, entArr) {
+                if (entArr) throw err;
+                if(!entArr) 
+                    res.status(403).send({success:false, msg: 'User Defined Entities not found'});
+                else 
+                    res.json(entArr);
+            });
+    },
+    addNewStory: (req, res) => {
+        modelStory = mongoose.model('Story', Story);
+        var newStory = modelStory({
+            token: req.body.token, // to know who own the story
+            name: req.body.name,
+            type: req.body.type
+        });
+        if(newStory)
+            newStory.save(function(err, newStory) { 
+                if (err) 
+                    res.json({success: false, msg: 'Failed to save' + err});
+                else {
+                    let filePath = 'stories/' + req.body.name + '.ezt';
+                    fs.writeFile(filePath, req.body.name, function(err) {
+                        if(err) 
+                            res.json({success: false, msg: 'Failed to save story file in server' + err});
+                        res.json({success: true, msg: 'Story Saved Successfully'});
+                    }); 
+                }
+        });
+    },
+    getStories: (req, res) => { 
+        modelStory = mongoose.model('Story', Story);
+        if(req.headers.token)
+        modelEntity.find({token: req.headers.token},function (err, stories) {
+            if (entArr) throw err;
+            if(!entArr) 
+                res.status(403).send({success:false, msg: 'Stories not found'});
+            else 
+                res.json(stories);
+        });
+    },
+    getStory:(req, res) => { 
+        if(req.headers.token && req.headers.name ){
+            let internalFilePath = 'stories/' + req.body.name + '.ezt';
+            let filePath = __dirname.replace('methods','stories\\') + req.headers.name + '.ezt';
+            if(!fs.existsSync(internalFilePath))
+                res.status(403).send({success:false, msg: 'Story file not found'});
+            else
+                res.sendFile(filePath, (err) => {
+                    if (err) 
+                        console.log(err);
+                     else 
+                        console.log('Sent:', filePath);
+                });
+        }
+    },
+    saveStory: (req, res) => { 
+        if(req.file && req.body.name) { 
+            //let filePath = 'stories/' + req.body.name + '.ezt';
+            //fs.writeFile(filePath, req.file, function(err) {
+            res.json({success: true, msg: 'Story Saved Successfully'});
+            }//); 
+        }
 }
+
 
 module.exports = functions;

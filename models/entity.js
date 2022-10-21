@@ -33,5 +33,4 @@ entitySchema.pre('save',function (next) {
         return next();
 });
 
-//module.exports = mongoose.model('Entity', entitySchema);
 module.exports = entitySchema
