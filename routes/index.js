@@ -12,7 +12,7 @@ var storage = multer.diskStorage({
 });
 var upload = multer({ storage: storage });
 
-router.get('/', (req,res) => {
+router.get('/', (req, res) => {
     res.send('Connected!');
 })
 

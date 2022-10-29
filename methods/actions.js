@@ -115,7 +115,7 @@ var functions = {
                     },
                     gender: { 
                         type: String,
-                        required: true
+                        required: false
                     }
                 });
                 var newEntity = modelEntity({
@@ -143,7 +143,7 @@ var functions = {
                     picture: req.body.picture,
                     name: req.body.name,
                     relations: req.body.relations,
-                    vista:req.body.vista
+                    vista: req.body.vista
                 });
                 break;
             case 'conversation':
@@ -195,7 +195,7 @@ var functions = {
                 });
                 break;
             case 'userDefined':
-                var atrrs  = req.body.attributes.split('|');
+                var atrrs  = req.body.attributes.split('|'); // spell | power | cheat | look 
                 atrrs.forEach( (atr) => {
                     Entity.add({
                     [atr]: {
