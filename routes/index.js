@@ -13,7 +13,7 @@ var storage = multer.diskStorage({
 var upload = multer({ storage: storage });
 
 router.get('/', (req, res) => {
-    res.send('Connected!');
+    res.status(200).send('Connected!');
 })
 
 //@desc Adding new user 
