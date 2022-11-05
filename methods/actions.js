@@ -28,61 +28,87 @@ var functions = {
         }
     },
     authenticate: function(req, res) { 
-        User.findOne({
-            username: req.body.username,
-        },
-        function(err, user) {
-            if (err) throw err;
-            if(!user) 
-                res.status(403).send({success:false, msg: 'Auth Failed, User not found'});
-            else { 
-                user.comparePassword(req.body.password, function (err,isMatch) { 
-                    if(isMatch && !err) { 
-                        var token = jwt.encode(user, config.secret);
-                        res.json({success: true, token: token});
-                    }
-                    else { 
-                        return res.status(403).send({success: false, msg:'Auth Failed, Wrong password'});
-                    }
-                });
-            }
-        });
+        if( (!req.body.username) && req.body.email)
+            User.findOne({
+                email: req.body.email,
+            },
+            function(err, user) {
+                if (err) throw err;
+                if(!user) 
+                    res.status(403).send({success:false, msg: 'Auth Failed, User not found'});
+                else { 
+                    user.comparePassword(req.body.password, function (err,isMatch) { 
+                        if(isMatch && !err) { 
+                            var token = jwt.encode(user, config.secret);
+                            res.json({success: true, token: token});
+                        }
+                        else { 
+                            res.status(403).send({success: false, msg:'Auth Failed, Wrong password'});
+                        }
+                    });
+                }
+            });
+        else if (req.body.username && !req.body.email)
+            User.findOne({
+                username: req.body.username,
+            },
+            function(err, user) {
+                if (err) throw err;
+                if(!user) 
+                    res.status(403).send({success:false, msg: 'Auth Failed, User not found'});
+                else { 
+                    user.comparePassword(req.body.password, function (err,isMatch) { 
+                        if(isMatch && !err) { 
+                            var token = jwt.encode(user, config.secret);
+                            res.json({success: true, token: token});
+                        }
+                        else { 
+                            res.status(403).send({success: false, msg:'Auth Failed, Wrong password'});
+                        }
+                    });
+                }
+            });
+            else 
+                res.status(404).json({success: false, msg:'Auth Failed something went wrong'});       
     },
     getInfo: function(req, res) { 
         if(req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
             var token = req.headers.authorization.split(' ')[1];
             var decodedToken = jwt.decode(token, config.secret);
-            return res.json({success: true, msg: 'Hello ' + decodedToken.username});
+            res.json({success: true, msg: 'Hello ' + decodedToken.username});
         }
         else { 
-            return res.json({success: false, msg:'No Headers'});
+            res.json({success: false, msg:'No Headers'});
         }
     },
     getEmail: function(req, res) { 
         if(req.headers.email){
             User.findOne({email: req.headers.email},function (err, user){
                 if(err) throw err;
-                if(user) 
-                    return res.json({success: true, msg: 'Email Found: ' + user.email});
+                if(user) {
+
+                    res.status(200).json({success: true, msg: 'Email Found: ' + user.email});
+                }
                 else
-                    return res.json({success: true, msg: 'Email Not Found'})
+                    res.status(404).json({success: true, msg: 'Email Not Found'})
             });  
         }
         else 
             return res.json({success: false, msg:'No Headers'});
     },
+    
     getUsername: function(req, res) { 
         if(req.headers.username){
             User.findOne({username: req.headers.username},function (err, user){
                 if(err) throw err;
                 if(user) 
-                    return res.json({success: true, msg: 'UserName Found: ' + user.username});
+                    res.status(200).json({success: true, msg: 'UserName Found: ' + user.username});
                 else
-                    return res.json({success: true, msg: 'UserName Not Found'})
+                    res.status(404).json({success: true, msg: 'UserName Not Found'})
             });  
         }
         else 
-            return res.json({success: false, msg:'No Headers'});
+            res.json({success: false, msg:'No Headers'});
 
     },
     addEntity: function(req, res) { 
