@@ -27,6 +27,7 @@ var functions = {
             });
         }
     },
+    //auth with user and email
     authenticate: function(req, res) { 
         if( (!req.body.username) && req.body.email)
             User.findOne({
