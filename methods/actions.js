@@ -7,11 +7,11 @@ const Story = require('../models/story');
 const fs = require('fs');
 
 var functions = {
-    addNewUser: function(req, res) { 
-        if((!req.body.name)  || (!req.body.surname) || (!req.body.username) || (!req.body.password) || (!req.body.email) ) { 
-            res.json({success: false, msg: 'Enter all fields'});
+    addNewUser: function (req, res) {
+        if ((!req.body.name) || (!req.body.surname) || (!req.body.username) || (!req.body.password) || (!req.body.email)) {
+            res.json({ success: false, msg: 'Enter all fields' });
         }
-        else { 
+        else {
             var newUser = User({
                 name: req.body.name,
                 surname: req.body.surname,
@@ -19,101 +19,101 @@ var functions = {
                 email: req.body.email,
                 password: req.body.password
             });
-            newUser.save(function(err, newUser) { 
-                if (err) 
-                    res.json({success: false, msg: 'Failed to save'});
-                else 
-                    res.json({success: true, msg: 'Successfully saved'});
+            newUser.save(function (err, newUser) {
+                if (err)
+                    res.json({ success: false, msg: 'Failed to save' });
+                else
+                    res.json({ success: true, msg: 'Successfully saved' });
             });
         }
     },
     //auth with user and email
-    authenticate: function(req, res) { 
-        if( (!req.body.username) && req.body.email)
+    authenticate: function (req, res) {
+        if ((!req.body.username) && req.body.email)
             User.findOne({
                 email: req.body.email,
             },
-            function(err, user) {
-                if (err) throw err;
-                if(!user) 
-                    res.status(403).send({success:false, msg: 'Auth Failed, User not found'});
-                else { 
-                    user.comparePassword(req.body.password, function (err,isMatch) { 
-                        if(isMatch && !err) { 
-                            var token = jwt.encode(user, config.secret);
-                            res.json({success: true, token: token});
-                        }
-                        else { 
-                            res.status(403).send({success: false, msg:'Auth Failed, Wrong password'});
-                        }
-                    });
-                }
-            });
+                function (err, user) {
+                    if (err) throw err;
+                    if (!user)
+                        res.status(403).send({ success: false, msg: 'Auth Failed, User not found' });
+                    else {
+                        user.comparePassword(req.body.password, function (err, isMatch) {
+                            if (isMatch && !err) {
+                                var token = jwt.encode(user, config.secret);
+                                res.json({ success: true, token: token });
+                            }
+                            else {
+                                res.status(403).send({ success: false, msg: 'Auth Failed, Wrong password' });
+                            }
+                        });
+                    }
+                });
         else if (req.body.username && !req.body.email)
             User.findOne({
                 username: req.body.username,
             },
-            function(err, user) {
-                if (err) throw err;
-                if(!user) 
-                    res.status(403).send({success:false, msg: 'Auth Failed, User not found'});
-                else { 
-                    user.comparePassword(req.body.password, function (err,isMatch) { 
-                        if(isMatch && !err) { 
-                            var token = jwt.encode(user, config.secret);
-                            res.json({success: true, token: token});
-                        }
-                        else { 
-                            res.status(403).send({success: false, msg:'Auth Failed, Wrong password'});
-                        }
-                    });
-                }
-            });
-            else 
-                res.status(404).json({success: false, msg:'Auth Failed something went wrong'});       
+                function (err, user) {
+                    if (err) throw err;
+                    if (!user)
+                        res.status(403).send({ success: false, msg: 'Auth Failed, User not found' });
+                    else {
+                        user.comparePassword(req.body.password, function (err, isMatch) {
+                            if (isMatch && !err) {
+                                var token = jwt.encode(user, config.secret);
+                                res.json({ success: true, token: token });
+                            }
+                            else {
+                                res.status(403).send({ success: false, msg: 'Auth Failed, Wrong password' });
+                            }
+                        });
+                    }
+                });
+        else
+            res.status(404).json({ success: false, msg: 'Auth Failed something went wrong' });
     },
-    getInfo: function(req, res) { 
-        if(req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
+    getInfo: function (req, res) {
+        if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
             var token = req.headers.authorization.split(' ')[1];
             var decodedToken = jwt.decode(token, config.secret);
-            res.json({success: true, msg: 'Hello ' + decodedToken.username});
+            res.json({ success: true, name: decodedToken.name, surname: decodedToken.surname, username: decodedToken.username, email: decodedToken.email });
         }
-        else { 
-            res.json({success: false, msg:'No Headers'});
+        else {
+            res.json({ success: false, msg: 'No Headers' });
         }
     },
-    getEmail: function(req, res) { 
-        if(req.headers.email){
-            User.findOne({email: req.headers.email},function (err, user){
-                if(err) throw err;
-                if(user) {
+    getEmail: function (req, res) {
+        if (req.headers.email) {
+            User.findOne({ email: req.headers.email }, function (err, user) {
+                if (err) throw err;
+                if (user) {
 
-                    res.status(200).json({success: true, msg: 'Email Found: ' + user.email});
+                    res.status(200).json({ success: true, msg: 'Email Found: ' + user.email });
                 }
                 else
-                    res.status(404).json({success: true, msg: 'Email Not Found'})
-            });  
+                    res.status(404).json({ success: true, msg: 'Email Not Found' })
+            });
         }
-        else 
-            return res.json({success: false, msg:'No Headers'});
+        else
+            return res.json({ success: false, msg: 'No Headers' });
     },
-    
-    getUsername: function(req, res) { 
-        if(req.headers.username){
-            User.findOne({username: req.headers.username},function (err, user){
-                if(err) throw err;
-                if(user) 
-                    res.status(200).json({success: true, msg: 'UserName Found: ' + user.username});
+
+    getUsername: function (req, res) {
+        if (req.headers.username) {
+            User.findOne({ username: req.headers.username }, function (err, user) {
+                if (err) throw err;
+                if (user)
+                    res.status(200).json({ success: true, msg: 'UserName Found: ' + user.username });
                 else
-                    res.status(404).json({success: true, msg: 'UserName Not Found'})
-            });  
+                    res.status(404).json({ success: true, msg: 'UserName Not Found' })
+            });
         }
-        else 
-            res.json({success: false, msg:'No Headers'});
+        else
+            res.json({ success: false, msg: 'No Headers' });
 
     },
-    addEntity: function(req, res) { 
-        modelEntity = mongoose.model('Entity',Entity)
+    addEntity: function (req, res) {
+        modelEntity = mongoose.model('Entity', Entity)
 
         // character,
         // location,
@@ -121,18 +121,18 @@ var functions = {
         // storyEvent,
         // userDefined,
         // atrributeTemplate,
-        switch (req.body.type) { 
-            case 'character': 
+        switch (req.body.type) {
+            case 'character':
                 Entity.add({
                     surename: {
                         type: String,
-                        required : false
+                        required: false
                     },
-                    personalityTraits: { 
+                    personalityTraits: {
                         type: String,
                         required: false
                     },
-                    appearanceTraits: { 
+                    appearanceTraits: {
                         type: String,
                         required: false
                     },
@@ -140,7 +140,7 @@ var functions = {
                         type: Number,
                         required: false
                     },
-                    gender: { 
+                    gender: {
                         type: String,
                         required: false
                     }
@@ -159,7 +159,7 @@ var functions = {
                 break;
             case 'location':
                 Entity.add({
-                    vista: { 
+                    vista: {
                         type: String,
                         required: false
                     }
@@ -175,9 +175,9 @@ var functions = {
                 break;
             case 'conversation':
                 Entity.add({
-                    participants: { 
+                    participants: {
                         type: Array,
-                        required:True
+                        required: True
                     }
                 });
                 var newEntity = modelEntity({
@@ -218,14 +218,14 @@ var functions = {
                     picture: req.body.picture,
                     name: req.body.name,
                     relations: req.body.relations,
-                    attributes:req.body.attributes
+                    attributes: req.body.attributes
                 });
                 break;
             case 'userDefined':
-                var atrrs  = req.body.attributes.split('|'); // spell | power | cheat | look 
-                atrrs.forEach( (atr) => {
+                var atrrs = req.body.attributes.split('|'); // spell | power | cheat | look 
+                atrrs.forEach((atr) => {
                     Entity.add({
-                    [atr]: {
+                        [atr]: {
                             type: String,
                             required: false
                         }
@@ -237,53 +237,53 @@ var functions = {
                     ["type", req.body.type],
                     ["picture", req.body.picture],
                     ["name", req.body.name],
-                    ["relations",req.body.relations],
+                    ["relations", req.body.relations],
                 ]);
-                for(var i=0 ; i < atrrs.length; i++)
-                    userDef.set(atrrs[i],vals[i]);
+                for (var i = 0; i < atrrs.length; i++)
+                    userDef.set(atrrs[i], vals[i]);
                 var newEntity = modelEntity(Object.fromEntries(userDef));
         }
-        if(newEntity)
-            newEntity.save(function(err, newEntity) { 
-                if (err) 
-                    res.json({success: false, msg: 'Failed to save' + err});
-                else 
-                    res.json({success: true, msg: 'Successfully saved'});
+        if (newEntity)
+            newEntity.save(function (err, newEntity) {
+                if (err)
+                    res.json({ success: false, msg: 'Failed to save' + err });
+                else
+                    res.json({ success: true, msg: 'Successfully saved' });
             });
         else
-            res.json({success: false, msg: 'Failed to save no entity created'});
+            res.json({ success: false, msg: 'Failed to save no entity created' });
     },
-    getEntity: function(req, res) { 
-        modelEntity = mongoose.model('Entity',Entity);
-        if(req.headers.name && req.headers.book)
-            modelEntity.findOne({name: req.headers.name, book:req.headers.book},function (err, ent) {
+    getEntity: function (req, res) {
+        modelEntity = mongoose.model('Entity', Entity);
+        if (req.headers.name && req.headers.book)
+            modelEntity.findOne({ name: req.headers.name, book: req.headers.book }, function (err, ent) {
                 if (err) throw err;
-                if(!ent) 
-                    res.status(403).send({success:false, msg: 'Entity not found'});
-                else 
+                if (!ent)
+                    res.status(403).send({ success: false, msg: 'Entity not found' });
+                else
                     res.json(ent);
             });
 
     },
-    getAllEntities: function(req, res) { 
-        modelEntity = mongoose.model('Entity',Entity);
-        if(req.headers.book)
-            modelEntity.find({book: req.headers.book},function (err, entArr) {
+    getAllEntities: function (req, res) {
+        modelEntity = mongoose.model('Entity', Entity);
+        if (req.headers.book)
+            modelEntity.find({ book: req.headers.book }, function (err, entArr) {
                 if (entArr) throw err;
-                if(!entArr) 
-                    res.status(403).send({success:false, msg: 'Entities not found'});
-                else 
+                if (!entArr)
+                    res.status(403).send({ success: false, msg: 'Entities not found' });
+                else
                     res.json(entArr);
             });
     },
-    getAllUserDefinedEntities: function(req, res) { 
-        modelEntity = mongoose.model('Entity',Entity);
-        if(req.headers.book)
-            modelEntity.find({book: req.headers.book, type:'userDefined'},function (err, entArr) {
+    getAllUserDefinedEntities: function (req, res) {
+        modelEntity = mongoose.model('Entity', Entity);
+        if (req.headers.book)
+            modelEntity.find({ book: req.headers.book, type: 'userDefined' }, function (err, entArr) {
                 if (entArr) throw err;
-                if(!entArr) 
-                    res.status(403).send({success:false, msg: 'User Defined Entities not found'});
-                else 
+                if (!entArr)
+                    res.status(403).send({ success: false, msg: 'User Defined Entities not found' });
+                else
                     res.json(entArr);
             });
     },
@@ -294,53 +294,53 @@ var functions = {
             name: req.body.name,
             type: req.body.type
         });
-        if(newStory)
-            newStory.save(function(err, newStory) { 
-                if (err) 
-                    res.json({success: false, msg: 'Failed to save' + err});
+        if (newStory)
+            newStory.save(function (err, newStory) {
+                if (err)
+                    res.json({ success: false, msg: 'Failed to save' + err });
                 else {
                     let filePath = 'stories/' + req.body.name + '.ezt';
-                    fs.writeFile(filePath, req.body.name, function(err) {
-                        if(err) 
-                            res.json({success: false, msg: 'Failed to save story file in server' + err});
-                        res.json({success: true, msg: 'Story Saved Successfully'});
-                    }); 
+                    fs.writeFile(filePath, req.body.name, function (err) {
+                        if (err)
+                            res.json({ success: false, msg: 'Failed to save story file in server' + err });
+                        res.json({ success: true, msg: 'Story Saved Successfully' });
+                    });
                 }
-        });
+            });
     },
-    getStories: (req, res) => { 
+    getStories: (req, res) => {
         modelStory = mongoose.model('Story', Story);
-        if(req.headers.token)
-        modelEntity.find({token: req.headers.token},function (err, stories) {
-            if (entArr) throw err;
-            if(!entArr) 
-                res.status(403).send({success:false, msg: 'Stories not found'});
-            else 
-                res.json(stories);
-        });
+        if (req.headers.token)
+            modelEntity.find({ token: req.headers.token }, function (err, stories) {
+                if (entArr) throw err;
+                if (!entArr)
+                    res.status(403).send({ success: false, msg: 'Stories not found' });
+                else
+                    res.json(stories);
+            });
     },
-    getStory:(req, res) => { 
-        if(req.headers.token && req.headers.name ){
+    getStory: (req, res) => {
+        if (req.headers.token && req.headers.name) {
             let internalFilePath = 'stories/' + req.body.name + '.ezt';
-            let filePath = __dirname.replace('methods','stories\\') + req.headers.name + '.ezt';
-            if(!fs.existsSync(internalFilePath))
-                res.status(403).send({success:false, msg: 'Story file not found'});
+            let filePath = __dirname.replace('methods', 'stories\\') + req.headers.name + '.ezt';
+            if (!fs.existsSync(internalFilePath))
+                res.status(403).send({ success: false, msg: 'Story file not found' });
             else
                 res.sendFile(filePath, (err) => {
-                    if (err) 
+                    if (err)
                         console.log(err);
-                     else 
+                    else
                         console.log('Sent:', filePath);
                 });
         }
     },
-    saveStory: (req, res) => { 
-        if(req.file && req.body.name) { 
+    saveStory: (req, res) => {
+        if (req.file && req.body.name) {
             //let filePath = 'stories/' + req.body.name + '.ezt';
             //fs.writeFile(filePath, req.file, function(err) {
-            res.json({success: true, msg: 'Story Saved Successfully'});
-            }//); 
-        }
+            res.json({ success: true, msg: 'Story Saved Successfully' });
+        }//); 
+    }
 }
 
 
