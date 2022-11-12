@@ -66,7 +66,7 @@ router.get('/entities/getalluserdefined',entitiy_actions.getAllUserDefinedEntiti
 
 //desc Create new story
 //@route POST /story/addNew
-//@body token name type
+//@body token name description type 
 router.post('/story/addnew', story_actions.addNewStory);
 
 //desc get all user stories
@@ -84,5 +84,11 @@ router.get('/story/getstory', story_actions.getStory);
 //@body name 
 //@file storyFile
 router.post('/story/savestory', upload.single('statement'), story_actions.saveStory);
+
+//desc Saves a story after editing by writer (overwrite)
+//@route GET /story/getstorycount
+//@headers token 
+router.get('/story/getstorycount', story_actions.getStoryCount);
+
 
 module.exports = router;

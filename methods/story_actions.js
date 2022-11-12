@@ -7,8 +7,9 @@ var functions = {
     addNewStory: (req, res) => {
         modelStory = mongoose.model('Story', Story);
         var newStory = modelStory({
-            token: req.body.token, // to know who own the story
+            token: req.body.token, // to know who owns the story
             name: req.body.name,
+            description: req.body.description, //added this for description addition 
             type: req.body.type
         });
         if (newStory)
@@ -29,8 +30,8 @@ var functions = {
         modelStory = mongoose.model('Story', Story);
         if (req.headers.token)
             modelStory.find({ token: req.headers.token }, function (err, stories) {
-                if (entArr) throw err;
-                if (!entArr)
+                if (err) throw err;
+                if (!stories)
                     res.status(403).send({ success: false, msg: 'Stories not found' });
                 else
                     res.json(stories);
@@ -38,8 +39,8 @@ var functions = {
     },
     getStory: (req, res) => {
         if (req.headers.token && req.headers.name) {
-            let internalFilePath = 'stories/' + req.body.name + '.ezt';
-            let filePath = __dirname.replace('methods', 'stories\\') + req.headers.name + '.ezt';
+            let internalFilePath = 'stories/' + req.body.name + '.json';
+            let filePath = __dirname.replace('methods', 'stories\\') + req.headers.name + '.json';
             if (!fs.existsSync(internalFilePath))
                 res.status(403).send({ success: false, msg: 'Story file not found' });
             else
@@ -57,6 +58,15 @@ var functions = {
             //fs.writeFile(filePath, req.file, function(err) {
             res.json({ success: true, msg: 'Story Saved Successfully' });
         }//); 
+    },
+    getStoryCount: (req,res) => { 
+        modelStory = mongoose.model('Story', Story);
+        if(req.headers.token){
+            modelStory.find({'token' : req.headers.token}).count((err,cnt)=>{
+                if(err) res.json({success: false, count: 'Count Error'});
+                res.json({success: true, count: cnt});
+            });
+        }
     }
 }
 
