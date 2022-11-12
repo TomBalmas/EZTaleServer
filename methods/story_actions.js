@@ -34,7 +34,7 @@ var functions = {
                 if (!stories)
                     res.status(403).send({ success: false, msg: 'Stories not found' });
                 else
-                    res.json(stories);
+                    res.status(200).json(stories);
             });
     },
     getStory: (req, res) => {
@@ -63,8 +63,8 @@ var functions = {
         modelStory = mongoose.model('Story', Story);
         if(req.headers.token){
             modelStory.find({'token' : req.headers.token}).count((err,cnt)=>{
-                if(err) res.json({success: false, count: 'Count Error'});
-                res.json({success: true, count: cnt});
+                if(err) res.status(403).json({success: false, count: 'Count Error'});
+                res.status(200).json({success: true, count: cnt});
             });
         }
     }
