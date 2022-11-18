@@ -67,7 +67,48 @@ var functions = {
                 res.status(200).json({success: true, count: cnt});
             });
         }
+    },
+    getPage: (req,res) => { 
+        modelStory = mongoose.model('Story', Story);
+        if(req.headers.token && req.headers.bookname && req.headers.page){
+            var storyPath = './stories/'+ req.headers.bookname + '.json';
+            if(fs.existsSync(storyPath)){
+                fs.readFile(storyPath, 'utf8', (err, data) => {
+                    if (err) throw err;
+                    obj = JSON.parse(data); //now it an object
+                    var con = obj[req.headers.page];
+                    if(!con)
+                        res.json({success: false,content:'not such page'});
+                    else
+                        res.json({success: true,content:con});
+                });
+            }
+        }
+    },
+    savePage: (req,res) => {
+        if(req.body.token && req.body.bookName && req.body.page && req.body.content){
+            var storyPath = './stories/'+ req.body.bookName + '.json';
+            var obj;
+            if(fs.existsSync(storyPath)){
+                fs.readFile(storyPath, 'utf8', function(err, data){
+                    if (err) throw err;
+                    obj = JSON.parse(data); //now it an object
+                    obj[req.body.page] = req.body.content;
+                  
+                    json = JSON.stringify(obj); //convert it back to json
+                    fs.writeFile(storyPath, json, 'utf8',(err)=>{
+                        if(err) throw err;
+                        res.json({success:true,msg:'page saved successfully'});
+                    });
+                });
+               
+                
+            }
+        }
     }
+
+
+
 }
 
 module.exports = functions;

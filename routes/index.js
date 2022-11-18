@@ -120,5 +120,16 @@ router.get('/entity/gettemplates', entity_actions.getBookTemplates);
 //@headers bookName 
 router.get('/entity/getevents', entity_actions.getBookEvents);
 
+//desc saves a page new or old
+//@route POST /story/savepage
+//@body token page book content 
+router.post('/story/savepage', story_actions.savePage);
+
+//desc get page from a book
+//@route GET /story/getPage
+//@body token page book  
+router.get('/story/getpage', story_actions.getPage);
+
+
 
 module.exports = router;
