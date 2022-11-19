@@ -68,7 +68,7 @@ var functions = {
     }
   },
   getPage: (req, res) => {
-    if (req.headers.token && req.headers.bookname && req.headers.page) {
+    if (req.headers.username && req.headers.bookname && req.headers.page) {
       var storyPath = "./stories/" + req.headers.bookname + ".json";
       if (fs.existsSync(storyPath)) {
         fs.readFile(storyPath, "utf8", (err, data) => {
@@ -83,7 +83,7 @@ var functions = {
   },
   savePage: (req, res) => {
     if (
-      req.body.token &&
+      req.body.username &&
       req.body.bookName &&
       req.body.page &&
       req.body.content
