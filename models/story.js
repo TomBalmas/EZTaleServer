@@ -1,11 +1,11 @@
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 var storySchema = new Schema({
-  token: {
+  username: {
     type: String,
     required: true,
   },
-  name: {
+  bookName: {
     type: String,
     required: true,
   },

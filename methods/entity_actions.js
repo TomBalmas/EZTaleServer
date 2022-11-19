@@ -35,14 +35,15 @@ var functions = {
           },
         });
         var newEntity = modelEntity({
-          book: req.body.book,
+          username: req.body.username,
+          bookName: req.body.bookName,
           type: req.body.type,
-          picture: req.body.picture,
           name: req.body.name,
           relations: req.body.relations,
           surename: req.body.surename,
           personalityTraits: req.body.personalityTraits,
-          appearanceTraits: req.body.age,
+          appearanceTraits: req.body.appearanceTraits,
+          age: req.body.age,
           gender: req.body.gender,
         });
         break;
@@ -54,9 +55,9 @@ var functions = {
           },
         });
         var newEntity = modelEntity({
-          book: req.body.book,
+          username: req.body.username,
+          bookName: req.body.bookName,
           type: req.body.type,
-          picture: req.body.picture,
           name: req.body.name,
           relations: req.body.relations,
           vista: req.body.vista,
@@ -70,9 +71,9 @@ var functions = {
           },
         });
         var newEntity = modelEntity({
-          book: req.body.book,
+          username: req.body.username,
+          bookName: req.body.bookName,
           type: req.body.type,
-          picture: req.body.picture,
           name: req.body.name,
           relations: req.body.relations,
           participants: req.body.participants,
@@ -86,9 +87,9 @@ var functions = {
           },
         });
         var newEntity = modelEntity({
-          book: req.body.book,
+          username: req.body.username,
+          bookName: req.body.bookName,
           type: req.body.type,
-          picture: req.body.picture,
           name: req.body.name,
           relations: req.body.relations,
           desc: req.body.desc,
@@ -102,9 +103,9 @@ var functions = {
           },
         });
         var newEntity = modelEntity({
-          book: req.body.book,
+          username: req.body.username,
+          bookName: req.body.bookName,
           type: req.body.type,
-          picture: req.body.picture,
           name: req.body.name,
           relations: req.body.relations,
           attributes: req.body.attributes,
@@ -122,9 +123,9 @@ var functions = {
         });
         var vals = req.body.values.split("|");
         var userDef = new Map([
-          ["book", req.body.book],
+          ["username", req.body.username],
+          ["bookName", req.body.bookName],
           ["type", req.body.type],
-          ["picture", req.body.picture],
           ["name", req.body.name],
           ["relations", req.body.relations],
         ]);
@@ -140,9 +141,13 @@ var functions = {
   },
   getEntity: (req, res) => {
     modelEntity = mongoose.model("Entity", Entity);
-    if (req.headers.name && req.headers.book)
+    if (req.headers.name && req.headers.bookName && req.headers.username)
       modelEntity.findOne(
-        { name: req.headers.name, book: req.headers.book },
+        {
+          bookName: req.headers.bookName,
+          username: req.headers.username,
+          name: req.headers.name,
+        },
         function (err, ent) {
           if (err) throw err;
           if (!ent)
@@ -153,168 +158,35 @@ var functions = {
   },
   getAllEntities: (req, res) => {
     modelEntity = mongoose.model("Entity", Entity);
-    if (req.headers.book)
-      modelEntity.find({ book: req.headers.book }, function (err, entArr) {
-        if (entArr) throw err;
-        if (!entArr)
-          res.status(403).send({ success: false, msg: "Entities not found" });
-        else res.json(entArr);
-      });
-  },
-  getAllUserDefinedEntities: (req, res) => {
-    modelEntity = mongoose.model("Entity", Entity);
-    if (req.headers.book)
+    if (req.headers.bookName && req.headers.username)
       modelEntity.find(
-        { book: req.headers.book, type: "userDefined" },
+        { book: req.headers.bookName, username: req.headers.username },
+        function (err, entArr) {
+          if (entArr) throw err;
+          if (!entArr)
+            res.status(403).send({ success: false, msg: "Entities not found" });
+          else res.json(entArr);
+        }
+      );
+  },
+  getAllTypeEntities: (req, res) => {
+    modelEntity = mongoose.model("Entity", Entity);
+    if (req.headers.bookName && req.headers.username && req.headers.type)
+      modelEntity.find(
+        {
+          username: req.headers.username,
+          bookName: req.headers.bookName,
+          type: req.headers.type,
+        },
         function (err, entArr) {
           if (err) throw err;
           if (!entArr)
             res
               .status(403)
-              .send({ success: false, msg: "User Defined Entities not found" });
+              .send({ success: false, msg: "Type entities not found" });
           else res.json(entArr);
         }
       );
   },
-  getBookCharacters: (req, res) => {
-    modelEntity = mongoose.model("Entity", Entity);
-    if (req.headers.bookName)
-      modelEntity.find(
-        { book: req.headers.bookName, type: "character" },
-        (err, entArr) => {
-          if (err) throw err;
-          if (!entArr)
-            res
-              .status(403)
-              .send({ success: false, msg: "No characters in this book." });
-          else {
-            var charactersMap = new Map();
-            entArr.forEach((element) => {
-              charactersMap.set(
-                "name",
-                element.name,
-                "surename",
-                element.surename
-              );
-            });
-            res.json(Object.fromEntries(charactersMap));
-          }
-        }
-      );
-  },
-  getBookLocations: (req, res) => {
-    modelEntity = mongoose.model("Entity", Entity);
-    if (req.headers.bookName)
-      modelEntity.find(
-        { book: req.headers.bookName, type: "location" },
-        (err, entArr) => {
-          if (err) throw err;
-          if (!entArr)
-            res
-              .status(403)
-              .send({ success: false, msg: "No locations in this book." });
-          else {
-            var locationsMap = new Map();
-            entArr.forEach((element) => {
-              locationsMap.set("name", element.name, "vista", element.vista);
-            });
-            res.json(Object.fromEntries(locationsMap));
-          }
-        }
-      );
-  },
-  getBookConversations: (req, res) => {
-    modelEntity = mongoose.model("Entity", Entity);
-    if (req.headers.bookName)
-      modelEntity.find(
-        { book: req.headers.bookName, type: "conversation" },
-        (err, entArr) => {
-          if (err) throw err;
-          if (!entArr)
-            res
-              .status(403)
-              .send({ success: false, msg: "No conversations in this book." });
-          else {
-            var conversationsMap = new Map();
-            entArr.forEach((element) => {
-              conversationsMap.set(
-                "name",
-                element.name,
-                "participants",
-                element.participants
-              );
-            });
-            res.json(Object.fromEntries(conversationsMap));
-          }
-        }
-      );
-  },
-  getBookCustomEntities: (req, res) => {
-    modelEntity = mongoose.model("Entity", Entity);
-    if (req.headers.bookName)
-      modelEntity.find(
-        { book: req.headers.bookName, type: "userDefined" },
-        (err, entArr) => {
-          if (err) throw err;
-          if (!entArr)
-            res
-              .status(403)
-              .send({
-                success: false,
-                msg: "No custom entities in this book.",
-              });
-          else {
-            var customEntitiesMap = new Map();
-            entArr.forEach((element) => {
-              customEntitiesMap.set("name", element.name); // TODO: get another column
-            });
-            res.json(Object.fromEntries(customEntitiesMap));
-          }
-        }
-      );
-  },
-  getBookTemplates: (req, res) => {
-    modelEntity = mongoose.model("Entity", Entity);
-    if (req.headers.bookName)
-      modelEntity.find(
-        { book: req.headers.bookName, type: "atrributeTemplate" },
-        (err, entArr) => {
-          if (err) throw err;
-          if (!entArr)
-            res
-              .status(403)
-              .send({ success: false, msg: "No templates in this book." });
-          else {
-            var templatesMap = new Map();
-            entArr.forEach((element) => {
-              templatesMap.set("name", element.name); // TODO: get another column
-            });
-            res.json(Object.fromEntries(templatesMap));
-          }
-        }
-      );
-  },
-  getBookEvents: (req, res) => {
-    modelEntity = mongoose.model("Entity", Entity);
-    if (req.headers.bookName)
-      modelEntity.find(
-        { book: req.headers.bookName, type: "storyEvent" },
-        (err, entArr) => {
-          if (err) throw err;
-          if (!entArr)
-            res
-              .status(403)
-              .send({ success: false, msg: "No events in this book." });
-          else {
-            var eventsMap = new Map();
-            entArr.forEach((element) => {
-              eventsMap.set("name", element.name, "description", element.desc);
-            });
-            res.json(Object.fromEntries(eventsMap));
-          }
-        }
-      );
-  },
 };
-
 module.exports = functions;

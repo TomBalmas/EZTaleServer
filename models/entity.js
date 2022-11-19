@@ -1,17 +1,17 @@
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 var entitySchema = new Schema({
-  book: {
+  username: {
+    type: String,
+    required: true,
+  },
+  bookName: {
     type: String,
     required: true,
   },
   type: {
     type: String,
     required: true,
-  },
-  picture: {
-    type: String,
-    required: false,
   },
   name: {
     type: String,
