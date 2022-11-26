@@ -72,7 +72,7 @@ var functions = {
             user.comparePassword(req.body.password, function (err, isMatch) {
               if (isMatch && !err) {
                 var token = jwt.encode(user, config.secret);
-                res.json({ success: true, token: token });
+                res.json({ success: true, token: token, username:user.username });
               } else {
                 res
                   .status(403)

@@ -5,19 +5,28 @@ const fs = require("fs");
 var functions = {
   addNewStory: (req, res) => {
     modelStory = mongoose.model("Story", Story);
+    var exists = false;
     var newStory = modelStory({
       username: req.body.username,
       bookName: req.body.bookName,
       description: req.body.description, //added this for description addition
       type: req.body.type,
     });
-    if (newStory)
+    modelStory.findOne({ // check if book already exists
+      username: req.body.username,
+      bookName: req.body.bookName
+    }, (err, book) => {
+      if (err) throw err;
+      if (book)
+        exists = true;
+    });
+    if (newStory && !exists)
       newStory.save(function (err, newStory) {
         if (err) res.json({ success: false, msg: "Failed to save" + err });
         else {
           let filePath =
-            "stories/" + req.body.username + "/" + req.body.name + ".json";
-          let direcoryPath = "stories/" + req.body.username;
+            "./stories/" + req.body.username + "/" + req.body.bookName + ".json";
+          let direcoryPath = "./stories/" + req.body.username;
           if (fs.existsSync(direcoryPath))
             fs.writeFile(filePath, "{}", function (err) {
               if (err)
@@ -27,7 +36,7 @@ var functions = {
                 });
               res.json({ success: true, msg: "Story Saved Successfully" });
             });
-          else {
+          else if (!newStory && !exists) {
             fs.mkdirSync(direcoryPath);
             fs.writeFile(filePath, "{}", function (err) {
               if (err)
@@ -37,7 +46,7 @@ var functions = {
                 });
               res.json({ success: true, msg: "Story Saved Successfully" });
             });
-          }
+          } else res.json({ success: false, msg: 'Story already exists' });
         }
       });
   },
@@ -96,6 +105,35 @@ var functions = {
       }
     } else res.json({ success: false, msg: "book not exists" });
   },
-};
+  deleteStory: (req, res) => {
+    modelStory = mongoose.model("Story", Story);
+    if (req.body.username, req.body.bookName)
+      modelStory.deleteOne(
+        { username: req.body.username, bookName: req.body.bookName },
+        function (err) {
+          if (err) throw err;
+          else res.status(200).json({ success: true, msg: "story deleted successfully" });
+        }
+      );
+  },
+  restoreStory: (req, res) => {
+    var storyPath =
+      "./stories/" + req.body.username + "/" + req.body.bookName + ".json";
+    if (fs.existsSync(storyPath)) {
+      modelStory = mongoose.model("Story", Story);
+      var restoredStory = modelStory({
+        username: req.body.username,
+        bookName: req.body.bookName,
+        description: req.body.description, //added this for description addition
+        type: req.body.type,
+      });
+      restoredStory.save(function (err, story) {
+        if (err) res.json({ success: false, msg: "Failed to save" + err });
+        res.status(200).json({ success: true, msg: 'story restored' });
+
+      });
+    } else res.json({ success: false, msg: 'story file not found in server can\'t restore' })
+  }
+}
 
 module.exports = functions;
