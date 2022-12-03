@@ -67,7 +67,7 @@ var functions = {
         Entity.add({
           participants: {
             type: Array,
-            required: True,
+            required: false, //TODO: change to true when adding participant selection
           },
         });
         var newEntity = modelEntity({
