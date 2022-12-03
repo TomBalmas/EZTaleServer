@@ -130,6 +130,23 @@ var functions = {
       });
     } else res.json({ success: false, msg: "No Headers" });
   },
+
+  changeUserSettings: (req, res) => { 
+    if(req.body.username){
+
+        var updatedUser = req.body;
+        try{
+        User.UpdateOne({username: req.body.username},updatedUser);
+        res.json({ success: true, msg: "User has been upadted" });
+        } catch{
+            res.json({ success: false, msg: "Update user error" });
+
+        }
+        
+        
+    }
+  }
+
 };
 
 module.exports = functions;

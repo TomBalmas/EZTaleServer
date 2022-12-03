@@ -36,4 +36,10 @@ router.get("/getemail", user_actions.getEmail);
 //@headers username
 router.get("/getusername", user_actions.getUsername);
 
+//@desc change username properties
+//@route POST /updateuser
+//@body username + every user property
+router.post("/updateuser", user_actions.getUsername);
+
+
 module.exports = router;
