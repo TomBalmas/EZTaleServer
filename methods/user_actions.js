@@ -145,6 +145,20 @@ var functions = {
         
         
     }
+  },
+
+  deleteUser: (req, res) => {
+    if(req.body.username && req.body.token){
+      try{
+        User.deleteOne({username:req.body.username, token:req.body.token },function (err) {
+          if (err) throw err;
+          else res.status(200).json({success:true, msg: "User has been deleted"});
+        });
+      } catch{
+        res.json({ success: false, msg: "Delete user error" });
+      }
+
+    }
   }
 
 };

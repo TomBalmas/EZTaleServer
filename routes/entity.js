@@ -23,4 +23,9 @@ router.get("/entities/getall", entity_actions.getAllEntities);
 //@headers book username type
 router.get("/getalltype", entity_actions.getAllTypeEntities);
 
+//desc delete entity
+//@route POST /entity/deleteentity
+//@headers bookName username name
+router.post("/deleteentity", entity_actions.deleteEntity);
+
 module.exports = router;

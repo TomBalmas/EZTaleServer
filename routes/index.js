@@ -41,5 +41,10 @@ router.get("/getusername", user_actions.getUsername);
 //@body username + every user property
 router.post("/updateuser", user_actions.getUsername);
 
+//@desc delete user
+//@route POST /deleteuser
+//@body username token
+router.post("/deleteuser", user_actions.deleteUser);
+
 
 module.exports = router;
