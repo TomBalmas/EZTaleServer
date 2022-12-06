@@ -16,7 +16,7 @@ router.get("/getentity", entity_actions.getEntity);
 //@desc Get All Book entities
 //@route GET /entity/getall
 //@headers book username
-router.get("/entities/getall", entity_actions.getAllEntities);
+router.get("/getall", entity_actions.getAllEntities);
 
 //desc Get All Book type entities
 //@route GET /entity/getalltype
