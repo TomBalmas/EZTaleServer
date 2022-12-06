@@ -21,7 +21,7 @@ router.get("/getall", entity_actions.getAllEntities);
 //desc Get All Book type entities
 //@route GET /entity/getalltype
 //@headers book username type
-router.get("/getalltype", entity_actions.getAllTypeEntities);
+router.post("/getalltype", entity_actions.getAllTypeEntities);
 
 //desc delete entity
 //@route POST /entity/deleteentity

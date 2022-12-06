@@ -171,12 +171,12 @@ var functions = {
   },
   getAllTypeEntities: (req, res) => {
     modelEntity = mongoose.model("Entity", Entity);
-    if (req.headers.bookName && req.headers.username && req.headers.type)
+    if (req.body.bookName && req.body.username && req.body.type)
       modelEntity.find(
         {
-          username: req.headers.username,
-          bookName: req.headers.bookName,
-          type: req.headers.type,
+          username: req.body.username,
+          bookName: req.body.bookName,
+          type: req.body.type,
         },
         function (err, entArr) {
           if (err) throw err;
