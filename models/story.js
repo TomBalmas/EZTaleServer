@@ -17,6 +17,14 @@ var storySchema = new Schema({
     type: String,
     required: true,
   },
+  coWriters:{
+    type:Array,
+    required: false
+  },
+  deadLines:{
+    typr:Array,
+    required: false
+  }
 });
 
 storySchema.pre("save", function (next) {

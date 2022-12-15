@@ -11,21 +11,30 @@ var functions = {
       bookName: req.body.bookName,
       description: req.body.description, //added this for description addition
       type: req.body.type,
+      coWriters: [],
+      deadLines: []
     });
-    modelStory.findOne({ // check if book already exists
-      username: req.body.username,
-      bookName: req.body.bookName
-    }, (err, book) => {
-      if (err) throw err;
-      if (book)
-        exists = true;
-    });
+    modelStory.findOne(
+      {
+        // check if book already exists
+        username: req.body.username,
+        bookName: req.body.bookName,
+      },
+      (err, book) => {
+        if (err) throw err;
+        if (book) exists = true;
+      }
+    );
     if (newStory && !exists)
       newStory.save(function (err, newStory) {
         if (err) res.json({ success: false, msg: "Failed to save" + err });
         else {
           let filePath =
-            "./stories/" + req.body.username + "/" + req.body.bookName + ".json";
+            "./stories/" +
+            req.body.username +
+            "/" +
+            req.body.bookName +
+            ".json";
           let direcoryPath = "./stories/" + req.body.username;
           if (fs.existsSync(direcoryPath))
             fs.writeFile(filePath, "{}", function (err) {
@@ -46,7 +55,7 @@ var functions = {
                 });
               res.json({ success: true, msg: "Story Saved Successfully" });
             });
-          } else res.json({ success: false, msg: 'Story already exists' });
+          } else res.json({ success: false, msg: "Story already exists" });
         }
       });
   },
@@ -107,12 +116,15 @@ var functions = {
   },
   deleteStory: (req, res) => {
     modelStory = mongoose.model("Story", Story);
-    if (req.body.username, req.body.bookName)
+    if ((req.body.username, req.body.bookName))
       modelStory.deleteOne(
         { username: req.body.username, bookName: req.body.bookName },
         function (err) {
           if (err) throw err;
-          else res.status(200).json({ success: true, msg: "story deleted successfully" });
+          else
+            res
+              .status(200)
+              .json({ success: true, msg: "story deleted successfully" });
         }
       );
   },
@@ -129,11 +141,81 @@ var functions = {
       });
       restoredStory.save(function (err, story) {
         if (err) res.json({ success: false, msg: "Failed to save" + err });
-        res.status(200).json({ success: true, msg: 'story restored' });
-
+        res.status(200).json({ success: true, msg: "story restored" });
       });
-    } else res.json({ success: false, msg: 'story file not found in server can\'t restore' })
-  }
-}
+    } else
+      res.json({
+        success: false,
+        msg: "story file not found in server can't restore",
+      });
+  },
+  addCoWriter: (req, res) => {
+    modelStory = mongoose.model("Story", Story);
+    modelStory.findOne(
+      {
+        bookName: req.body.bookName,
+        username: req.body.username,
+        coUsername: req.body.coUsername,
+      },
+      (err, book) => {
+        if (err) throw err;
+        book.coWriters.push(req.body.coUsername);
+        res.json({
+          success: true,
+          msg: `coWriter ${req.body.coUsername} added to story ${req.body.bookName}`,
+        });
+      }
+    );
+  },
+  getCowriters: (req, res) => {
+    modelStory = mongoose.model("Story", Story);
+    modelStory.findOne(
+        {
+            bookName:req.headers.bookName,
+            username: req.headers.username
+        },
+        (err,book) => {
+            if(err) throw err;
+            res.json(book.coWriters);
+        }
+    );
+  },
+
+  addDeadLine: (req, res) => {
+    modelStory = mongoose.model("Story", Story);
+    modelStory.findOne(
+      {
+        bookName: req.body.bookName,
+        username: req.body.username,
+        coUsername: req.body.coUsername,
+        deadLine: req.body.deadLine,
+      },
+      (err, book) => {
+        if (err) throw err;
+        book.deadLines.push({
+          coUsername: req.body.coUsername,
+          deadLine: req.body.deadLine,
+        });
+        res.json({
+          success: true,
+          msg: `coWriter ${req.body.coUsername} added deadline ${req.body.deadLine}`,
+        });
+      }
+    );
+  },
+  getDeadLines: (req, res) => {
+    modelStory = mongoose.model("Story", Story);
+    modelStory.findOne(
+        {
+            bookName:req.headers.bookName,
+            username: req.headers.username
+        },
+        (err,book) => {
+            if(err) throw err;
+            res.json(book.deadLines);
+        }
+    );
+  },
+};
 
 module.exports = functions;

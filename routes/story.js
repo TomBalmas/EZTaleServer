@@ -26,5 +26,24 @@ router.get("/getpage", story_actions.getPage);
 //@body book username
 router.post("/deletestory", story_actions.deleteStory);
 
+//desc add a coriter to story
+//@route GET /story/addCoWriter
+//@body book username coUsername
+router.post("/addCoWriter", story_actions.addCoWriter);
+
+//desc get the cowriters list
+//@route GET /story/getCoWriters
+//@body username page book
+router.get("/getCoWriters", story_actions.getCowriters);
+
+//desc add deadline to cowriter
+//@route GET /story/addDeadline
+//@body book username coUsername deadline
+router.post("/addDeadline", story_actions.addDeadLine);
+
+//desc get the deadline list
+//@route GET /story/getDeadlines
+//@body username page book
+router.get("/getDeadlines", story_actions.getDeadLines);
 
 module.exports = router;
