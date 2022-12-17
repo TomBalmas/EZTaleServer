@@ -159,7 +159,7 @@ var functions = {
       },
       (err, book) => {
         if (err) throw err;
-        
+
         book.coWriters.push(req.body.coUsername);
         book.save();
         res.json({
@@ -172,14 +172,14 @@ var functions = {
   getCowriters: (req, res) => {
     modelStory = mongoose.model("Story", Story);
     modelStory.findOne(
-        {
-            bookName:req.headers.bookName,
-            username: req.headers.username
-        },
-        (err,book) => {
-            if(err) throw err;
-            res.json(book.coWriters);
-        }
+      {
+        bookName: req.headers.bookName,
+        username: req.headers.username
+      },
+      (err, book) => {
+        if (err) throw err;
+        res.json(book.coWriters);
+      }
     );
   },
 
@@ -208,26 +208,31 @@ var functions = {
   getDeadLines: (req, res) => {
     modelStory = mongoose.model("Story", Story);
     modelStory.findOne(
-        {
-            bookName:req.headers.bookName,
-            username: req.headers.username
-        },
-        (err,book) => {
-            if(err) throw err;
-            res.json(book.deadLines);
-        }
+      {
+        bookName: req.headers.bookName,
+        username: req.headers.username
+      },
+      (err, book) => {
+        if (err) throw err;
+        res.json(book.deadLines);
+      }
     );
   },
-  getCoStories: (req,res) => { 
+  getCoStories: (req, res) => {
     modelStory = mongoose.model("Story", Story);
-    var coBooks;
-    modelStory.find().forEach(book => {
-      book.coWriters.forEach(coWriter =>{
-        if(req.headers.username == coWriter)
-          coBooks.push(book);
-      })
+    var coBooks = [];
+    modelStory.find({}, (err, books) => {
+      if (err) throw err;
+      books.forEach(book => {
+        if (book.coWriters != null)
+          book.coWriters.forEach(user => {
+            if (user == req.headers.username) {
+              coBooks.push(book.bookName);
+              res.json({ success: true, msg: coBooks });
+            }
+          });
+      });
     });
-    res.json(coBooks);
   }
 };
 

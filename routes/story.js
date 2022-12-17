@@ -49,6 +49,6 @@ router.get("/getDeadlines", story_actions.getDeadLines);
 //desc get the co stories
 //@route GET /story/getCoStories
 //@body username
-router.get("/getDeadlines", story_actions.getCoStories);
+router.get("/getCoStories", story_actions.getCoStories);
 
 module.exports = router;
