@@ -159,11 +159,9 @@ var functions = {
       },
       (err, book) => {
         if (err) throw err;
-        modelStory.updateOne({
-            bookName: req.body.bookName,
-            username: req.body.username,
-            coUsername: req.body.coUsername, }, 
-          { $push: {coWriters: req.body.coUsername} });
+        
+        book.coWriters.push(req.body.coUsername);
+        book.save();
         res.json({
           success: true,
           msg: `coWriter ${req.body.coUsername} added to story ${req.body.bookName}`,
