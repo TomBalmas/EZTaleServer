@@ -159,7 +159,11 @@ var functions = {
       },
       (err, book) => {
         if (err) throw err;
-        book.coWriters.push(req.body.coUsername);
+        modelStory.updateOne({
+            bookName: req.body.bookName,
+            username: req.body.username,
+            coUsername: req.body.coUsername, }, 
+          { $push: {coWriters: req.body.coUsername} });
         res.json({
           success: true,
           msg: `coWriter ${req.body.coUsername} added to story ${req.body.bookName}`,
@@ -216,6 +220,17 @@ var functions = {
         }
     );
   },
+  getCoStories: (req,res) => { 
+    modelStory = mongoose.model("Story", Story);
+    var coBooks;
+    modelStory.find().forEach(book => {
+      book.coWriters.forEach(coWriter =>{
+        if(req.headers.username == coWriter)
+          coBooks.push(book);
+      })
+    });
+    res.json(coBooks);
+  }
 };
 
 module.exports = functions;

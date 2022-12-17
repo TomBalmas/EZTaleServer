@@ -46,4 +46,9 @@ router.post("/addDeadline", story_actions.addDeadLine);
 //@body username page book
 router.get("/getDeadlines", story_actions.getDeadLines);
 
+//desc get the co stories
+//@route GET /story/getCoStories
+//@body username
+router.get("/getDeadlines", story_actions.getCoStories);
+
 module.exports = router;

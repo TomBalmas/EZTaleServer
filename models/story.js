@@ -22,7 +22,7 @@ var storySchema = new Schema({
     required: false
   },
   deadLines:{
-    typr:Array,
+    type:Array,
     required: false
   }
 });
