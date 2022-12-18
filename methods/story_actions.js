@@ -198,6 +198,7 @@ var functions = {
           coUsername: req.body.coUsername,
           deadLine: req.body.deadLine,
         });
+        book.save();
         res.json({
           success: true,
           msg: `coWriter ${req.body.coUsername} added deadline ${req.body.deadLine}`,

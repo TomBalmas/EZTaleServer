@@ -28,4 +28,20 @@ router.post("/getalltype", entity_actions.getAllTypeEntities);
 //@headers bookName username name
 router.post("/deleteentity", entity_actions.deleteEntity);
 
+//desc edit entity
+//@route POST /entity/editentity
+//@headers bookName username name relations mentioned
+router.post("/editentity", entity_actions.editEntity);
+
+//desc add relation
+//@route POST /entity/addrelation
+//@headers bookName username name relateTo 
+router.post("/addrelation", entity_actions.addRelation);
+
+//desc delete relation
+//@route POST /entity/deleterelation
+//@headers bookName username name relateTo 
+router.post("/deleterelation", entity_actions.deleteRelation);
+
+
 module.exports = router;
