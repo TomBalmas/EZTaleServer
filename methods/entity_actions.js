@@ -141,12 +141,12 @@ var functions = {
   },
   getEntity: (req, res) => {
     modelEntity = mongoose.model("Entity", Entity);
-    if (req.headers.name && req.headers.bookName && req.headers.username)
+    if (req.body.name && req.body.bookName && req.body.username)
       modelEntity.findOne(
         {
-          bookName: req.headers.bookName,
-          username: req.headers.username,
-          name: req.headers.name,
+          bookName: req.body.bookName,
+          username: req.body.username,
+          name: req.body.name,
         },
         function (err, ent) {
           if (err) throw err;

@@ -9,9 +9,9 @@ const router = express.Router();
 router.post("/addentity", entity_actions.addEntity);
 
 //@desc Get Entity
-//@route GET /entity/getentitiy
+//@route POST /entity/getentity
 //@headers name, book username
-router.get("/getentity", entity_actions.getEntity);
+router.post("/getentity", entity_actions.getEntity);
 
 //@desc Get All Book entities
 //@route GET /entity/getall

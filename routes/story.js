@@ -17,9 +17,9 @@ router.get("/getstories", story_actions.getStories);
 router.post("/savepage", story_actions.savePage);
 
 //desc get page from a book
-//@route GET /story/getPage
+//@route POST /story/getPage
 //@body username page book
-router.get("/getpage", story_actions.getPage);
+router.post("/getpage", story_actions.getPage);
 
 //desc delete story
 //@route GET /story/deletestory

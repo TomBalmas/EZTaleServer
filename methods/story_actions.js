@@ -73,18 +73,18 @@ var functions = {
       );
   },
   getPage: (req, res) => {
-    if (req.headers.username && req.headers.bookName && req.headers.page) {
+    if (req.body.username && req.body.bookName && req.body.page) {
       var storyPath =
         "./stories/" +
-        req.headers.username +
+        req.body.username +
         "/" +
-        req.headers.bookName +
+        req.body.bookName +
         ".json";
       if (fs.existsSync(storyPath)) {
         fs.readFile(storyPath, "utf8", (err, data) => {
           if (err) throw err;
           obj = JSON.parse(data); //now it an object
-          var con = obj[req.headers.page];
+          var con = obj[req.body.page];
           if (!con) res.json({ success: false, content: "not such page" });
           else res.json({ success: true, content: con });
         });
