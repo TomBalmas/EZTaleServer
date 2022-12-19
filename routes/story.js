@@ -37,13 +37,15 @@ router.post("/addCoWriter", story_actions.addCoWriter);
 router.get("/getCoWriters", story_actions.getCowriters);
 
 //desc add deadline to cowriter
-//@route GET /story/addDeadline
-//@body book username coUsername deadline
+//and sends email with calendar
+//@route POST /story/addDeadline
+//@body bookName username email coUsername deadline(days)
+//@body description coUsernameEmail
 router.post("/addDeadline", story_actions.addDeadLine);
 
 //desc get the deadline list
 //@route GET /story/getDeadlines
-//@body username page book
+//@body username bookName
 router.get("/getDeadlines", story_actions.getDeadLines);
 
 //desc get the co stories

@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Story = require("../models/story");
+const email_sender = require("./email_sender")
 const fs = require("fs");
 
 var functions = {
@@ -151,20 +152,33 @@ var functions = {
   },
   addCoWriter: (req, res) => {
     modelStory = mongoose.model("Story", Story);
+    if (req.body.inviteCode)
+      var code = Random.hexString(16)
     modelStory.findOne(
       {
         bookName: req.body.bookName,
         username: req.body.username,
         coUsername: req.body.coUsername,
+        coUsernameEmail: req.body.coUsernameEmail
       },
       (err, book) => {
         if (err) throw err;
-
-        book.coWriters.push(req.body.coUsername);
+        if (!req.body.inviteCode)
+          book.coWriters.push({
+            username: req.body.coUsername,
+            email: req.body.coUsernameEmail
+          });
+        else
+          book.coWriters.push({
+            username: req.body.coUsername,
+            email: req.body.coUsernameEmail,
+            inviteCode: req.body.inviteCode
+          });
         book.save();
         res.json({
           success: true,
           msg: `coWriter ${req.body.coUsername} added to story ${req.body.bookName}`,
+          code: code
         });
       }
     );
@@ -182,29 +196,37 @@ var functions = {
       }
     );
   },
-
   addDeadLine: (req, res) => {
     modelStory = mongoose.model("Story", Story);
-    modelStory.findOne(
-      {
+    if (req.body.bookName &&
+      req.body.username &&
+      req.body.email &&
+      req.body.coUsername &&
+      req.body.coUsernameEmail &&
+      req.body.deadLine &&
+      req.body.description) {
+      modelStory.findOne({
         bookName: req.body.bookName,
         username: req.body.username,
         coUsername: req.body.coUsername,
-        deadLine: req.body.deadLine,
+        deadLine: req.body.deadLine, // for how many days
       },
-      (err, book) => {
-        if (err) throw err;
-        book.deadLines.push({
-          coUsername: req.body.coUsername,
-          deadLine: req.body.deadLine,
-        });
-        book.save();
-        res.json({
-          success: true,
-          msg: `coWriter ${req.body.coUsername} added deadline ${req.body.deadLine}`,
-        });
-      }
-    );
+        (err, book) => {
+          if (err) throw err;
+          book.deadLines.push({
+            coUsername: req.body.coUsername,
+            deadLine: moment().add(parseInt(req.body.deadLine), 'days'),
+          });
+          book.save();
+          //sending the mail with the calandar object
+          email_sender.sendDueCalendar(req, res);
+          res.json({
+            success: true,
+            msg: `coWriter ${req.body.coUsername} added deadline ${req.body.deadLine}`,
+          });
+        }
+      );
+    }
   },
   getDeadLines: (req, res) => {
     modelStory = mongoose.model("Story", Story);

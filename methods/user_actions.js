@@ -1,6 +1,7 @@
 var User = require("../models/user");
 var jwt = require("jwt-simple");
 var config = require("../config/dbconfig");
+var email_sender = require("./email_sender")
 
 var functions = {
   addNewUser: function (req, res) {
@@ -22,7 +23,11 @@ var functions = {
       });
       newUser.save(function (err, newUser) {
         if (err) res.json({ success: false, msg: "Failed to save" });
-        else res.json({ success: true, msg: "Successfully saved" });
+        else {
+          email_sender.sendHelloMsg(req,res);
+          res.json({ success: true, msg: "Successfully saved" });
+        }
+
       });
     }
   },
@@ -159,7 +164,8 @@ var functions = {
       }
 
     }
-  }
+  },
+
 
 };
 
