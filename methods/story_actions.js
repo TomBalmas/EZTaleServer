@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const Story = require("../models/story");
-const email_sender = require("./email_sender")
+const email_sender = require("./email_sender");
 const fs = require("fs");
 
 var functions = {
@@ -13,7 +13,7 @@ var functions = {
       description: req.body.description, //added this for description addition
       type: req.body.type,
       coWriters: [],
-      deadLines: []
+      deadLines: [],
     });
     modelStory.findOne(
       {
@@ -76,11 +76,7 @@ var functions = {
   getPage: (req, res) => {
     if (req.body.username && req.body.bookName && req.body.page) {
       var storyPath =
-        "./stories/" +
-        req.body.username +
-        "/" +
-        req.body.bookName +
-        ".json";
+        "./stories/" + req.body.username + "/" + req.body.bookName + ".json";
       if (fs.existsSync(storyPath)) {
         fs.readFile(storyPath, "utf8", (err, data) => {
           if (err) throw err;
@@ -152,33 +148,50 @@ var functions = {
   },
   addCoWriter: (req, res) => {
     modelStory = mongoose.model("Story", Story);
-    if (req.body.inviteCode)
-      var code = Random.hexString(16)
+    if (req.body.inviteCode) var code = Random.hexString(16);
     modelStory.findOne(
       {
         bookName: req.body.bookName,
         username: req.body.username,
         coUsername: req.body.coUsername,
-        coUsernameEmail: req.body.coUsernameEmail
+        coUserEmail: req.body.coUserEmail,
       },
       (err, book) => {
         if (err) throw err;
         if (!req.body.inviteCode)
           book.coWriters.push({
             username: req.body.coUsername,
-            email: req.body.coUsernameEmail
+            email: req.body.coUserEmail,
           });
         else
           book.coWriters.push({
             username: req.body.coUsername,
-            email: req.body.coUsernameEmail,
-            inviteCode: req.body.inviteCode
+            email: req.body.coUserEmail,
+            inviteCode: req.body.inviteCode,
           });
+        let filePath =
+          "./stories/" +
+          req.body.username +
+          "/" +
+          req.body.bookName +
+          "_" +
+          req.coUsername +
+          ".json";
+        let direcoryPath = "./stories/" + req.body.username;
+        if (fs.existsSync(direcoryPath))
+          fs.writeFile(filePath, "{}", function (err) {
+            if (err)
+              res.json({
+                success: false,
+                msg: "Failed to save story file in server" + err,
+              });
+          });
+        else res.json({ success: false, msg: "Story Directory not exists!" });
         book.save();
         res.json({
           success: true,
           msg: `coWriter ${req.body.coUsername} added to story ${req.body.bookName}`,
-          code: code
+          code: code,
         });
       }
     );
@@ -188,7 +201,7 @@ var functions = {
     modelStory.findOne(
       {
         bookName: req.headers.bookName,
-        username: req.headers.username
+        username: req.headers.username,
       },
       (err, book) => {
         if (err) throw err;
@@ -198,24 +211,27 @@ var functions = {
   },
   addDeadLine: (req, res) => {
     modelStory = mongoose.model("Story", Story);
-    if (req.body.bookName &&
+    if (
+      req.body.bookName &&
       req.body.username &&
       req.body.email &&
       req.body.coUsername &&
       req.body.coUsernameEmail &&
       req.body.deadLine &&
-      req.body.description) {
-      modelStory.findOne({
-        bookName: req.body.bookName,
-        username: req.body.username,
-        coUsername: req.body.coUsername,
-        deadLine: req.body.deadLine, // for how many days
-      },
+      req.body.description
+    ) {
+      modelStory.findOne(
+        {
+          bookName: req.body.bookName,
+          username: req.body.username,
+          coUsername: req.body.coUsername,
+          deadLine: req.body.deadLine, // for how many days
+        },
         (err, book) => {
           if (err) throw err;
           book.deadLines.push({
             coUsername: req.body.coUsername,
-            deadLine: moment().add(parseInt(req.body.deadLine), 'days'),
+            deadLine: moment().add(parseInt(req.body.deadLine), "days"),
           });
           book.save();
           //sending the mail with the calandar object
@@ -233,7 +249,7 @@ var functions = {
     modelStory.findOne(
       {
         bookName: req.headers.bookName,
-        username: req.headers.username
+        username: req.headers.username,
       },
       (err, book) => {
         if (err) throw err;
@@ -246,9 +262,9 @@ var functions = {
     var coBooks = [];
     modelStory.find({}, (err, books) => {
       if (err) throw err;
-      books.forEach(book => {
+      books.forEach((book) => {
         if (book.coWriters != null)
-          book.coWriters.forEach(user => {
+          book.coWriters.forEach((user) => {
             if (user == req.headers.username) {
               coBooks.push(book.bookName);
               res.json({ success: true, msg: coBooks });
@@ -256,7 +272,118 @@ var functions = {
           });
       });
     });
-  }
+  },
+  saveCowriterPage: (req, res) => {
+    if (
+      req.body.username &&
+      req.body.bookName &&
+      req.body.page &&
+      req.body.coUsername &&
+      req.body.content
+    ) {
+      var storyPath =
+        "./stories/" +
+        req.body.username +
+        "/" +
+        req.body.bookName +
+        "_" +
+        req.body.coUsername +
+        ".json";
+      if (fs.existsSync(storyPath)) {
+        fs.readFile(storyPath, "utf8", function (err, data) {
+          if (err) throw err;
+          obj = JSON.parse(data); //now it an object
+          obj[req.body.page] = req.body.content;
+          json = JSON.stringify(obj); //convert it back to json
+          fs.writeFile(storyPath, json, "utf8", (err) => {
+            if (err) throw err;
+            res.json({ success: true, msg: "page saved successfully" });
+          });
+        });
+      }
+    } else res.json({ success: false, msg: "book not exists" });
+  },
+  getCowriterPage: (req, res) => {
+    if (
+      req.body.username &&
+      req.body.bookName &&
+      req.body.coUsername &&
+      req.body.page
+    ) {
+      var storyPath =
+        "./stories/" +
+        req.body.username +
+        "/" +
+        req.body.bookName +
+        "_" +
+        req.body.coUsername +
+        ".json";
+      if (fs.existsSync(storyPath)) {
+        fs.readFile(storyPath, "utf8", (err, data) => {
+          if (err) throw err;
+          obj = JSON.parse(data); //now it an object
+          var con = obj[req.body.page];
+          if (!con) res.json({ success: false, content: "not such page" });
+          else res.json({ success: true, content: con });
+        });
+      }
+    }
+  },
+  acceptMergeRequest: (req, res) => {
+    if (
+      req.body.username &&
+      req.body.bookName &&
+      req.body.coUsername &&
+      req.body.page
+    ) {
+      var storyPath =
+        "./stories/" + req.body.username + "/" + req.body.bookName + ".json";
+      var margePath =
+        "./stories/" +
+        req.body.username +
+        "/" +
+        req.body.bookName +
+        "_" +
+        req.body.coUsername +
+        ".json";
+      var book;
+      var margeBook;
+      var newBook;
+      if (fs.existsSync(storyPath)) {
+        fs.readFile(storyPath, "utf8", (err, data) => {
+          if (err) throw err;
+          book = JSON.parse(data);
+        });
+      }
+      if (fs.existsSync(margePath)) {
+        fs.readFile(margePath, "utf8", (err, data) => {
+          if (err) throw err;
+          margeBook = JSON.parse(data);
+        });
+      }
+      for (var i = 1; i < parseInt(req.body.page); i++)
+        newBook[i.toString()] = book[i.toString()];
+
+      var numOfTotalPages = countObjectKeys(book) + countObjectKeys(margeBook);
+      var continueOldPage =
+        countObjectKeys(margeBook) + parseInt(req.body.page);
+      for (
+        var i = parseInt(req.body.page);
+        i < countObjectKeys(margeBook);
+        i++
+      ) {
+        var newPage = i - parseInt(req.body.page) + 1;
+        newBook[i.toString()] = margeBook[newPage.toString()];
+      }
+      for (var i = continueOldPage; i <= numOfTotalPages; i++)
+        newBook[i.toString()] = book[i.toString()];
+      json = JSON.stringify(newBook);
+      fs.writeFile(storyPath, json, "utf8", (err) => {
+        if (err) throw err;
+        res.json({ success: true, msg: "marge saved successfully" });
+      });
+    }
+  },
 };
 
 module.exports = functions;
