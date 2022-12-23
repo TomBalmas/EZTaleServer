@@ -125,7 +125,8 @@ var functions = {
         }
       );
   },
-  restoreStory: (req, res) => { //TEST!
+  restoreStory: (req, res) => {
+    //TEST!
     var storyPath =
       "./stories/" + req.body.username + "/" + req.body.bookName + ".json";
     if (fs.existsSync(storyPath)) {
@@ -146,7 +147,8 @@ var functions = {
         msg: "story file not found in server can't restore",
       });
   },
-  addCoWriter: (req, res) => { //TEST!
+  addCoWriter: (req, res) => {
+    //TEST!
     modelStory = mongoose.model("Story", Story);
     var code = Random.hexString(16);
     modelStory.findOne(
@@ -162,7 +164,7 @@ var functions = {
           username: req.body.coUsername,
           email: req.body.coUserEmail,
           inviteCode: code,
-          accepted: false
+          accepted: false,
         });
         email_sender.sendCoWriterInvite(
           code,
@@ -198,7 +200,8 @@ var functions = {
       }
     );
   },
-  getCowriters: (req, res) => { //TEST!
+  getCowriters: (req, res) => {
+    //TEST!
     modelStory = mongoose.model("Story", Story);
     modelStory.findOne(
       {
@@ -211,7 +214,8 @@ var functions = {
       }
     );
   },
-  addDeadLine: (req, res) => { //TEST!
+  addDeadLine: (req, res) => {
+    //TEST!
     modelStory = mongoose.model("Story", Story);
     if (
       req.body.bookName &&
@@ -227,7 +231,7 @@ var functions = {
           bookName: req.body.bookName,
           username: req.body.username,
           coUsername: req.body.coUsername,
-          requested: false
+          requested: false,
         },
         (err, book) => {
           if (err) throw err;
@@ -246,7 +250,8 @@ var functions = {
       );
     }
   },
-  getDeadLines: (req, res) => { //TEST!
+  getDeadLines: (req, res) => {
+    //TEST!
     modelStory = mongoose.model("Story", Story);
     modelStory.findOne(
       {
@@ -259,7 +264,8 @@ var functions = {
       }
     );
   },
-  getCoWriterDeadlines: (req, res) => { //TEST!
+  getCoWriterDeadlines: (req, res) => {
+    //TEST!
     modelStory = mongoose.model("Story", Story);
     var deadLines = [];
     modelStory.find({}, (err, books) => {
@@ -275,7 +281,8 @@ var functions = {
       });
     });
   },
-  getCoStories: (req, res) => { //TEST!
+  getCoStories: (req, res) => {
+    //TEST!
     modelStory = mongoose.model("Story", Story);
     var coBooks = [];
     modelStory.find({}, (err, books) => {
@@ -291,7 +298,8 @@ var functions = {
       });
     });
   },
-  saveCowriterPage: (req, res) => { //TEST!
+  saveCowriterPage: (req, res) => {
+    //TEST!
     if (
       req.body.username &&
       req.body.bookName &&
@@ -321,7 +329,8 @@ var functions = {
       }
     } else res.json({ success: false, msg: "book not exists" });
   },
-  getCowriterPage: (req, res) => { //TEST!
+  getCowriterPage: (req, res) => {
+    //TEST!
     if (
       req.body.username &&
       req.body.bookName &&
@@ -347,7 +356,8 @@ var functions = {
       }
     }
   },
-  acceptMergeRequest: (req, res) => { //TODO: add find delete request //TEST!
+  acceptMergeRequest: (req, res) => {
+    //TODO: add find delete request //TEST!
     if (
       req.body.username &&
       req.body.bookName &&
@@ -393,22 +403,35 @@ var functions = {
       });
     }
   }, //TODO: add to co writer marge request
-  acceptInvitationAddBook: (req, res) => { //TEST!
+  acceptInvitationAddBook: (req, res) => {
+    //TEST!
     if (req.body.inviteCode && req.body.coUsername) {
       modelStory = mongoose.model("Story", Story);
       modelStory.find({}, (err, books) => {
         if (err) throw err;
         books.forEach((book) => {
-            book.coWriters.forEach((writer)=>{
-                if(writer.inviteCode == req.body.inviteCode){
-                    writer.accepted = true;
-                    writer.save();
-                    res.json({success: true, msg:'book as been added as co book'});
-                }
-            });
-            book.save();
+          book.coWriters.forEach((writer) => {
+            if (writer.inviteCode == req.body.inviteCode) {
+              writer.accepted = true;
+              writer.save();
+              res.json({ success: true, msg: "book as been added as co book" });
+            }
+          });
+          book.save();
         });
       });
+    }
+  },
+  getNumberOfPages: (req, res) => {
+    //TEST!
+    if (req.body.username && req.body.bookName) {
+      var book;
+      var storyPath =
+        "./stories/" + req.body.username + "/" + req.body.bookName + ".json";
+      if (fs.existsSync(storyPath))
+        book = JSON.parse(fs.readFileSync(storyPath));
+      else res.json({ success: false, msg: "book not found" });
+      res.json({ success: true, msg: `${Object.keys(book).length}` });
     }
   },
 };
