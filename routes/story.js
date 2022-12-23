@@ -53,4 +53,11 @@ router.get("/getDeadlines", story_actions.getDeadLines);
 //@body username
 router.get("/getCoStories", story_actions.getCoStories);
 
+//desc accepting a marge request
+//@route POST /story/acceptMergeRequest
+//@body username bookName coUsername page
+router.post("/acceptMergeRequest", story_actions.acceptMergeRequest);
+
+
+
 module.exports = router;

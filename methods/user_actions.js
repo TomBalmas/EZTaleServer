@@ -136,7 +136,7 @@ var functions = {
     } else res.json({ success: false, msg: "No Headers" });
   },
 
-  changeUserSettings: (req, res) => { 
+  changeUserSettings: (req, res) => { //TEST!
     if(req.body.username){
 
         var updatedUser = req.body;
@@ -162,7 +162,6 @@ var functions = {
       } catch{
         res.json({ success: false, msg: "Delete user error" });
       }
-
     }
   },
 
