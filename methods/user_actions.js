@@ -122,6 +122,20 @@ var functions = {
       });
     } else return res.json({ success: false, msg: "No Headers" });
   },
+  
+  getUserByEmail: (req,res) => { 
+    if (req.headers.email) {
+        User.findOne({ email: req.headers.email }, function (err, user) {
+          if (err) throw err;
+          if (user) {
+            res
+              .status(200)
+              .json({ success: true, username: user.username});
+          } else res.status(404).json({ success: true, msg: "Email Not Found" });
+        });
+      } else return res.json({ success: false, msg: "No Headers" });
+
+  },
 
   getUsername: function (req, res) {
     if (req.headers.username) {

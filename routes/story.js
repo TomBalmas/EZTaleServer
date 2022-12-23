@@ -26,7 +26,7 @@ router.post("/getpage", story_actions.getPage);
 //@body book username
 router.post("/deletestory", story_actions.deleteStory);
 
-//desc add a coriter to story
+//desc add a co writer to story
 //@route GET /story/addCoWriter
 //@body book username coUsername
 router.post("/addCoWriter", story_actions.addCoWriter);

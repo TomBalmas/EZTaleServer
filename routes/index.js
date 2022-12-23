@@ -46,5 +46,9 @@ router.post("/updateuser", user_actions.getUsername);
 //@body username token
 router.post("/deleteuser", user_actions.deleteUser);
 
+//@desc Get user by email
+//@route GET /getuserbyemail
+//@headers email
+router.get("/getuserbyemail", user_actions.getUserByEmail);
 
 module.exports = router;
