@@ -48,7 +48,7 @@ var functions = {
             });
           else if (!newStory && !exists) {
             fs.mkdirSync(direcoryPath);
-            fs.writeFile(filePath, "{}", function (err) {
+            fs.writeFile(filePath, "{\"1\":\"\"}", function (err) {
               if (err)
                 res.json({
                   success: false,
