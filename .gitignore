@@ -4,4 +4,3 @@
 # ignore ALL modules files  and package-lock json file
 node_modules/
 package-lock.json
-stories/
