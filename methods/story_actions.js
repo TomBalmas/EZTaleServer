@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const Story = require("../models/story");
 const email_sender = require("./email_sender");
 const fs = require("fs");
+var randomstring = require("randomstring");
 
 var functions = {
   addNewStory: (req, res) => {
@@ -48,7 +49,7 @@ var functions = {
             });
           else if (!newStory && !exists) {
             fs.mkdirSync(direcoryPath);
-            fs.writeFile(filePath, "{\"1\":\"\"}", function (err) {
+            fs.writeFile(filePath, '{"1":""}', function (err) {
               if (err)
                 res.json({
                   success: false,
@@ -148,9 +149,9 @@ var functions = {
       });
   },
   addCoWriter: (req, res) => {
-    //TEST!
+    //working
     modelStory = mongoose.model("Story", Story);
-    var code = Random.hexString(16);
+    var code = randomstring.generate(16);
     modelStory.findOne(
       {
         bookName: req.body.bookName,
@@ -179,11 +180,11 @@ var functions = {
           "/" +
           req.body.bookName +
           "_" +
-          req.coUsername +
+          req.body.coUsername +
           ".json";
         let direcoryPath = "./stories/" + req.body.username;
         if (fs.existsSync(direcoryPath))
-          fs.writeFile(filePath, "{}", function (err) {
+          fs.writeFile(filePath, '{"1":""}', function (err) {
             if (err)
               res.json({
                 success: false,
@@ -205,8 +206,8 @@ var functions = {
     modelStory = mongoose.model("Story", Story);
     modelStory.findOne(
       {
-        bookName: req.headers.bookName,
-        username: req.headers.username,
+        bookName: req.body.bookName,
+        username: req.body.username,
       },
       (err, book) => {
         if (err) throw err;
@@ -406,18 +407,26 @@ var functions = {
   acceptInvitationAddBook: (req, res) => {
     //TEST!
     if (req.body.inviteCode && req.body.coUsername) {
+      suc = false;
       modelStory = mongoose.model("Story", Story);
       modelStory.find({}, (err, books) => {
         if (err) throw err;
         books.forEach((book) => {
+            if(suc) return;
           book.coWriters.forEach((writer) => {
-            if (writer.inviteCode == req.body.inviteCode) {
-              writer.accepted = true;
-              writer.save();
-              res.json({ success: true, msg: "book as been added as co book" });
+            if (writer != null && writer.inviteCode == req.body.inviteCode) {
+              suc = writer.accepted = true;
+              return;
             }
           });
-          book.save();
+          if (suc) {
+            book.save();
+            res.json({ success: true, msg: "book as been added as co book" });
+            return;
+          } else {
+            res.json({ success: false, msg: "Code not found!" });
+            return;
+          }
         });
       });
     }

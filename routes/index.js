@@ -47,8 +47,8 @@ router.post("/updateuser", user_actions.getUsername);
 router.post("/deleteuser", user_actions.deleteUser);
 
 //@desc Get user by email
-//@route GET /getuserbyemail
+//@route POST /getuserbyemail
 //@headers email
-router.get("/getuserbyemail", user_actions.getUserByEmail);
+router.post("/getuserbyemail", user_actions.getUserByEmail);
 
 module.exports = router;

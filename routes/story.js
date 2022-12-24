@@ -49,19 +49,24 @@ router.post("/addDeadline", story_actions.addDeadLine);
 router.get("/getDeadlines", story_actions.getDeadLines);
 
 //desc get the co stories
-//@route GET /story/getCoStories
+//@route POST /story/getCoStories
 //@body username
-router.get("/getCoStories", story_actions.getCoStories);
+router.post("/getCoStories", story_actions.getCoStories);
 
 //desc accepting a marge request
 //@route POST /story/acceptMergeRequest
 //@body username bookName coUsername page
 router.post("/acceptMergeRequest", story_actions.acceptMergeRequest);
 
-//desc accepting a marge request
+//desc get pages number of story
 //@route POST /story/getnumberofpages
 //@body username bookName
 router.post("/getnumberofpages", story_actions.getNumberOfPages);
+
+//desc accept invitation 
+//@route POST /story/acceptInvitationAddBook
+//@body inviteCode coUsername
+router.post("/acceptInvitationAddBook", story_actions.acceptInvitationAddBook);
 
 
 

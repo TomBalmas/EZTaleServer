@@ -86,8 +86,8 @@ var functions = {
       html: `<h1>Hello ${coUsername} you got a new invitation </h1>
                 <body>
                     <p>
-                        The invitation code is: ${code} <br>
-                        Please go to Co-Writers page and accept the code. <br>
+                        The invitation code is: <b>${code}</b> <br>
+                        Please go to User settings page and accept the code. <br>
                         After you insert the code the book will be added to your books list <br>
                         as a Co-Book, you will get deadlines from the main writer. <br>
                         Enjoy!
