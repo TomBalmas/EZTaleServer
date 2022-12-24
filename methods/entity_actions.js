@@ -39,7 +39,7 @@ var functions = {
           bookName: req.body.bookName,
           type: req.body.type,
           name: req.body.name,
-          relations: req.body.relations,
+          relations: req.body.relations, 
           surename: req.body.surename,
           personalityTraits: req.body.personalityTraits,
           appearanceTraits: req.body.appearanceTraits,
