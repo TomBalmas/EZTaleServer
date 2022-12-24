@@ -38,6 +38,7 @@ var functions = {
             req.body.bookName +
             ".json";
           let direcoryPath = "./stories/" + req.body.username;
+          if (!fs.existsSync(direcoryPath)) fs.mkdirSync(direcoryPath);
           if (fs.existsSync(direcoryPath))
             fs.writeFile(filePath, "{}", function (err) {
               if (err)
@@ -290,7 +291,11 @@ var functions = {
       books.forEach((book) => {
         if (book.coWriters != null)
           book.coWriters.forEach((user) => {
-            if (user != null && user.username == req.body.username && user.accepted == true)
+            if (
+              user != null &&
+              user.username == req.body.username &&
+              user.accepted == true
+            )
               coBooks.push(book);
           });
       });
@@ -421,30 +426,6 @@ var functions = {
       );
     }
   },
-
-  //   modelStory.find({}, (err, books) => {
-  //     if (err) throw err;
-  //     for (const book of books) {
-  //       if (suc) return;
-  //       const objectToUpdate = book.coWriters.find(object => object.inviteCode === req.body.inviteCode);
-  //       suc = objectToUpdate.accepted = true;
-  //       if (suc) {
-  //         book.save((err) => {
-  //           if (err) throw err;
-  //           else {
-  //             res.json({
-  //               success: true,
-  //               msg: "book as been added as co book",
-  //             });
-  //             return;
-  //           }
-  //         });
-  //       } else {
-  //         res.json({ success: false, msg: "Code not found!" });
-  //         return;
-  //       }
-  //     }
-  //   });
 
   getNumberOfPages: (req, res) => {
     //TEST!

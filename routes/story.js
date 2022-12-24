@@ -63,7 +63,6 @@ router.post("/saveCowriterPage", story_actions.saveCowriterPage);
 //@body username
 router.post("/getCowriterPage", story_actions.getCowriterPage);
 
-
 //desc accepting a marge request
 //@route POST /story/acceptMergeRequest
 //@body username bookName coUsername page
