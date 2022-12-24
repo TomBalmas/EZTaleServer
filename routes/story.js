@@ -53,6 +53,17 @@ router.get("/getDeadlines", story_actions.getDeadLines);
 //@body username
 router.post("/getCoStories", story_actions.getCoStories);
 
+//desc saves co writers page
+//@route POST /story/saveCowriterPage
+//@body username
+router.post("/saveCowriterPage", story_actions.saveCowriterPage);
+
+//desc get co writers page
+//@route POST /story/getCowriterPage
+//@body username
+router.post("/getCowriterPage", story_actions.getCowriterPage);
+
+
 //desc accepting a marge request
 //@route POST /story/acceptMergeRequest
 //@body username bookName coUsername page

@@ -283,7 +283,6 @@ var functions = {
     });
   },
   getCoStories: (req, res) => {
-    //TEST!
     modelStory = mongoose.model("Story", Story);
     var coBooks = [];
     modelStory.find({}, (err, books) => {
@@ -291,12 +290,12 @@ var functions = {
       books.forEach((book) => {
         if (book.coWriters != null)
           book.coWriters.forEach((user) => {
-            if (user == req.headers.username && user.accepted == true) {
+            if (user != null && user.username == req.body.username && user.accepted == true)
               coBooks.push(book);
-              res.json({ success: true, msg: coBooks });
-            }
           });
       });
+      if (coBooks != []) res.json({ success: true, msg: coBooks });
+      else res.json({ success: false, msg: "no Co-books found!" });
     });
   },
   saveCowriterPage: (req, res) => {
@@ -405,32 +404,48 @@ var functions = {
     }
   }, //TODO: add to co writer marge request
   acceptInvitationAddBook: (req, res) => {
-    //TEST!
     if (req.body.inviteCode && req.body.coUsername) {
       suc = false;
       modelStory = mongoose.model("Story", Story);
-      modelStory.find({}, (err, books) => {
-        if (err) throw err;
-        books.forEach((book) => {
-            if(suc) return;
-          book.coWriters.forEach((writer) => {
-            if (writer != null && writer.inviteCode == req.body.inviteCode) {
-              suc = writer.accepted = true;
-              return;
-            }
-          });
-          if (suc) {
-            book.save();
-            res.json({ success: true, msg: "book as been added as co book" });
-            return;
-          } else {
-            res.json({ success: false, msg: "Code not found!" });
-            return;
-          }
-        });
-      });
+      modelStory.updateOne(
+        { "coWriters.inviteCode": req.body.inviteCode },
+        { $set: { "coWriters.$.accepted": true } },
+        (error) => {
+          if (error) res.json({ success: false, msg: "Code not found!" });
+          else
+            res.json({
+              success: true,
+              msg: "book as been added as co book",
+            });
+        }
+      );
     }
   },
+
+  //   modelStory.find({}, (err, books) => {
+  //     if (err) throw err;
+  //     for (const book of books) {
+  //       if (suc) return;
+  //       const objectToUpdate = book.coWriters.find(object => object.inviteCode === req.body.inviteCode);
+  //       suc = objectToUpdate.accepted = true;
+  //       if (suc) {
+  //         book.save((err) => {
+  //           if (err) throw err;
+  //           else {
+  //             res.json({
+  //               success: true,
+  //               msg: "book as been added as co book",
+  //             });
+  //             return;
+  //           }
+  //         });
+  //       } else {
+  //         res.json({ success: false, msg: "Code not found!" });
+  //         return;
+  //       }
+  //     }
+  //   });
+
   getNumberOfPages: (req, res) => {
     //TEST!
     if (req.body.username && req.body.bookName) {
