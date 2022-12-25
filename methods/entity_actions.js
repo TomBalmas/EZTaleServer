@@ -39,7 +39,7 @@ var functions = {
           bookName: req.body.bookName,
           type: req.body.type,
           name: req.body.name,
-          relations: req.body.relations, 
+          relations: req.body.relations,
           surename: req.body.surename,
           personalityTraits: req.body.personalityTraits,
           appearanceTraits: req.body.appearanceTraits,
@@ -224,10 +224,14 @@ var functions = {
         name: req.body.name,
         bookName: req.body.bookName,
         username: req.body.username,
-        relateTo: req.body.relateTo
+        relateTo: req.body.relateTo,
+        type: req.body.type
       }, (err, entity) => {
         if (err) throw err;
-        entity.relations.push(req.body.relateTo);
+        entity.relations.push({
+          relateTo: req.body.relateTo,
+          type: req.body.type
+        });
         entity.save();
       }
       );
@@ -238,7 +242,10 @@ var functions = {
         relateTo: req.body.name
       }, (err, entity) => {
         if (err) throw err;
-        entity.relations.push(req.body.name);
+        entity.relations.push({
+          relateTo: req.body.name,
+          type: req.body.type
+        });
         entity.save();
       }
       );
@@ -252,15 +259,15 @@ var functions = {
         name: req.body.name,
         bookName: req.body.bookName,
         username: req.body.username,
-        relateTo: req.body.relateTo
+        relateTo: req.body.relateTo,
+        type: req.body.type
       }, (err, entity) => {
         if (err) throw err;
-        const index = entity.relations.indexOf(req.body.relateTo);
+        const index = entity.relations.indexOf({ relateTo: req.body.relateTo, type: req.body.type });
         if (index > -1)  // only splice array when item is found
           entity.relations.splice(index, 1); // 2nd parameter means remove one item only
         else
           res.json({ success: false, msg: "can't find relation" });
-
         entity.save();
       }
       );
@@ -268,10 +275,14 @@ var functions = {
         name: req.body.relateTo,
         bookName: req.body.bookName,
         username: req.body.username,
-        relateTo: req.body.name
+        relateTo: req.body.name,
+        type: req.body.type
       }, (err, entity) => {
         if (err) throw err;
-        const index = entity.relations.indexOf(req.body.name);
+        const index = entity.relations.indexOf({
+          relateTo: req.body.name,
+          type: req.body.type
+        });
         if (index > -1)  // only splice array when item is found
           entity.relations.splice(index, 1); // 2nd parameter means remove one item only
         else
