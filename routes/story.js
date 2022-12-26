@@ -34,7 +34,7 @@ router.post("/addCoWriter", story_actions.addCoWriter);
 //desc get the cowriters list
 //@route GET /story/getCoWriters
 //@body username page book
-router.get("/getCoWriters", story_actions.getCowriters);
+router.post("/getCoWriters", story_actions.getCowriters);
 
 //desc add deadline to cowriter
 //and sends email with calendar
