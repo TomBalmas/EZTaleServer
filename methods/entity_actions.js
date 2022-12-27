@@ -98,7 +98,7 @@ var functions = {
       case "attributeTemplate":
         Entity.add({
           attributes: {
-            type: String,
+            type: Array,
             required: false,
           },
         });
@@ -112,25 +112,20 @@ var functions = {
         });
         break;
       case "userDefined":
-        var atrrs = req.body.attributes.split("|"); // spell | power | cheat | look
-        atrrs.forEach((atr) => {
-          Entity.add({
-            [atr]: {
-              type: String,
-              required: false,
-            },
-          });
+        Entity.add({
+          attributes: {
+            type: Array,
+            required: false,
+          },
         });
-        var vals = req.body.values.split("|");
-        var userDef = new Map([
-          ["username", req.body.username],
-          ["bookName", req.body.bookName],
-          ["type", req.body.type],
-          ["name", req.body.name],
-          ["relations", req.body.relations],
-        ]);
-        for (var i = 0; i < atrrs.length; i++) userDef.set(atrrs[i], vals[i]);
-        var newEntity = modelEntity(Object.fromEntries(userDef));
+        var newEntity = modelEntity({
+          username: req.body.username,
+          bookName: req.body.bookName,
+          type: req.body.type,
+          name: req.body.name,
+          relations: req.body.relations,
+          attributes: req.body.attributes,
+        });
     }
     if (newEntity)
       newEntity.save(function (err, newEntity) {
@@ -138,6 +133,43 @@ var functions = {
         else res.json({ success: true, msg: "Successfully saved" });
       });
     else res.json({ success: false, msg: "Failed to save no entity created" });
+  },
+  addAttribute: (req, res) => {
+    modelEntity = mongoose.model("Entity", Entity);
+    if (req.body.name && req.body.bookName && req.body.username && req.body.type && req.body.attr && req.body.val) {
+      modelEntity.findOne({
+        name: req.body.name,
+        bookName: req.body.bookName,
+        username: req.body.username,
+        type: req.body.type
+      }, (err, entity) => {
+        if (err) throw err;
+        entity.attributes.push({
+          attr: req.body.attr,
+          val: req.body.val
+        });
+        entity.save();
+      }
+      );
+    }
+  },
+  deleteAttribute: (req, res) => {
+    modelEntity = mongoose.model("Entity", Entity);
+    if (req.body.name && req.body.bookName && req.body.username && req.body.type && req.body.attr && req.body.val) {
+      modelEntity.findOne({
+        name: req.body.name,
+        bookName: req.body.bookName,
+        username: req.body.username,
+        type: req.body.type
+      }, (err, entity) => {
+        if (err) throw err;
+        const index = entity.attributes.indexOf({ attr: req.body.attr, val: req.body.val });
+        if (index > -1)  // only splice array when item is found
+          entity.attributes.splice(index, 1);
+        entity.save();
+      }
+      );
+    }
   },
   getEntity: (req, res) => {
     modelEntity = mongoose.model("Entity", Entity);
