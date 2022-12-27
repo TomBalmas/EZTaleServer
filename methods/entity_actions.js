@@ -158,11 +158,11 @@ var functions = {
   },
   getAllEntities: (req, res) => {
     modelEntity = mongoose.model("Entity", Entity);
-    if (req.headers.bookName && req.headers.username)
+    if (req.body.bookName && req.body.username)
       modelEntity.find(
-        { book: req.headers.bookName, username: req.headers.username },
+        { bookName: req.body.bookName, username: req.body.username },
         function (err, entArr) {
-          if (entArr) throw err;
+          if (err) throw err;
           if (!entArr)
             res.status(403).send({ success: false, msg: "Entities not found" });
           else res.json(entArr);
@@ -219,18 +219,17 @@ var functions = {
   },
   addRelation: (req, res) => {
     modelEntity = mongoose.model("Entity", Entity);
-    if (req.body.name && req.body.bookName && req.body.username && req.body.relateTo) {
+    if (req.body.name && req.body.bookName && req.body.username && req.body.relateTo && req.body.type && req.body.typeRelateTo) {
       modelEntity.findOne({
         name: req.body.name,
         bookName: req.body.bookName,
         username: req.body.username,
-        relateTo: req.body.relateTo,
         type: req.body.type
       }, (err, entity) => {
         if (err) throw err;
         entity.relations.push({
           relateTo: req.body.relateTo,
-          type: req.body.type
+          type: req.body.typeRelateTo
         });
         entity.save();
       }
@@ -239,7 +238,6 @@ var functions = {
         name: req.body.relateTo,
         bookName: req.body.bookName,
         username: req.body.username,
-        relateTo: req.body.name
       }, (err, entity) => {
         if (err) throw err;
         entity.relations.push({
@@ -254,16 +252,15 @@ var functions = {
   },
   deleteRelation: (req, res) => {
     modelEntity = mongoose.model("Entity", Entity);
-    if (req.body.name && req.body.bookName && req.body.username && req.body.relateTo) {
+    if (req.body.name && req.body.bookName && req.body.username && req.body.relateTo && req.body.type && req.body.typeRelateTo) {
       modelEntity.findOne({
         name: req.body.name,
         bookName: req.body.bookName,
         username: req.body.username,
-        relateTo: req.body.relateTo,
         type: req.body.type
       }, (err, entity) => {
         if (err) throw err;
-        const index = entity.relations.indexOf({ relateTo: req.body.relateTo, type: req.body.type });
+        const index = entity.relations.indexOf({ relateTo: req.body.relateTo, type: req.body.typeRelateTo });
         if (index > -1)  // only splice array when item is found
           entity.relations.splice(index, 1); // 2nd parameter means remove one item only
         else
@@ -276,7 +273,7 @@ var functions = {
         bookName: req.body.bookName,
         username: req.body.username,
         relateTo: req.body.name,
-        type: req.body.type
+        type: req.body.typeRelateTo
       }, (err, entity) => {
         if (err) throw err;
         const index = entity.relations.indexOf({

@@ -14,9 +14,9 @@ router.post("/addentity", entity_actions.addEntity);
 router.post("/getentity", entity_actions.getEntity);
 
 //@desc Get All Book entities
-//@route GET /entity/getall
+//@route POST /entity/getall
 //@headers book username
-router.get("/getall", entity_actions.getAllEntities);
+router.post("/getall", entity_actions.getAllEntities);
 
 //desc Get All Book type entities
 //@route GET /entity/getalltype
