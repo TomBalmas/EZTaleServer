@@ -136,38 +136,60 @@ var functions = {
   },
   addAttribute: (req, res) => {
     modelEntity = mongoose.model("Entity", Entity);
-    if (req.body.name && req.body.bookName && req.body.username && req.body.type && req.body.attr && req.body.val) {
-      modelEntity.findOne({
-        name: req.body.name,
-        bookName: req.body.bookName,
-        username: req.body.username,
-        type: req.body.type
-      }, (err, entity) => {
-        if (err) throw err;
-        entity.attributes.push({
-          attr: req.body.attr,
-          val: req.body.val
-        });
-        entity.save();
-      }
+    if (
+      req.body.name &&
+      req.body.bookName &&
+      req.body.username &&
+      req.body.type &&
+      req.body.attr &&
+      req.body.val
+    ) {
+      modelEntity.findOne(
+        {
+          name: req.body.name,
+          bookName: req.body.bookName,
+          username: req.body.username,
+          type: req.body.type,
+        },
+        (err, entity) => {
+          if (err) throw err;
+          entity.attributes.push({
+            attr: req.body.attr,
+            val: req.body.val,
+          });
+          entity.save();
+        }
       );
     }
   },
   deleteAttribute: (req, res) => {
     modelEntity = mongoose.model("Entity", Entity);
-    if (req.body.name && req.body.bookName && req.body.username && req.body.type && req.body.attr && req.body.val) {
-      modelEntity.findOne({
-        name: req.body.name,
-        bookName: req.body.bookName,
-        username: req.body.username,
-        type: req.body.type
-      }, (err, entity) => {
-        if (err) throw err;
-        const index = entity.attributes.indexOf({ attr: req.body.attr, val: req.body.val });
-        if (index > -1)  // only splice array when item is found
-          entity.attributes.splice(index, 1);
-        entity.save();
-      }
+    if (
+      req.body.name &&
+      req.body.bookName &&
+      req.body.username &&
+      req.body.type &&
+      req.body.attr &&
+      req.body.val
+    ) {
+      modelEntity.findOne(
+        {
+          name: req.body.name,
+          bookName: req.body.bookName,
+          username: req.body.username,
+          type: req.body.type,
+        },
+        (err, entity) => {
+          if (err) throw err;
+          const index = entity.attributes.indexOf({
+            attr: req.body.attr,
+            val: req.body.val,
+          });
+          if (index > -1)
+            // only splice array when item is found
+            entity.attributes.splice(index, 1);
+          entity.save();
+        }
       );
     }
   },
@@ -222,105 +244,152 @@ var functions = {
   },
   editEntity: (req, res) => {
     modelEntity = mongoose.model("Entity", Entity);
-    if (req.body.name && req.body.bookName && req.body.username && req.body.type) {
-      modelEntity.deleteOne({
-        name: req.body.name,
-        bookName: req.body.bookName,
-        username: req.body.username,
-        relations: req.body.relations,
-        mentioned: req.body.mentioned
-      }, (err) => { if (err) throw err; });
+    if (
+      req.body.name &&
+      req.body.bookName &&
+      req.body.username &&
+      req.body.type
+    ) {
+      modelEntity.deleteOne(
+        {
+          name: req.body.name,
+          bookName: req.body.bookName,
+          username: req.body.username,
+          relations: req.body.relations,
+          mentioned: req.body.mentioned,
+        },
+        (err) => {
+          if (err) throw err;
+        }
+      );
       functions.addEntity(req, res);
     }
   },
   deleteEntity: (req, res) => {
     modelEntity = mongoose.model("Entity", Entity);
     if (req.body.name && req.body.bookName && req.body.username) {
-      modelEntity.deleteOne({
-        name: req.body.name,
-        bookName: req.body.bookName,
-        username: req.body.username
-      },
+      modelEntity.deleteOne(
+        {
+          name: req.body.name,
+          bookName: req.body.bookName,
+          username: req.body.username,
+        },
         (err) => {
           if (err) throw err;
-          else
-            res.json({ success: true, msg: "Entity Deleted" });
-        });
+          else res.json({ success: true, msg: "Entity Deleted" });
+        }
+      );
     }
-
   },
   addRelation: (req, res) => {
     modelEntity = mongoose.model("Entity", Entity);
-    if (req.body.name && req.body.bookName && req.body.username && req.body.relateTo && req.body.type && req.body.typeRelateTo) {
-      modelEntity.findOne({
-        name: req.body.name,
-        bookName: req.body.bookName,
-        username: req.body.username,
-        type: req.body.type
-      }, (err, entity) => {
-        if (err) throw err;
-        entity.relations.push({
-          relateTo: req.body.relateTo,
-          type: req.body.typeRelateTo
-        });
-        entity.save();
-      }
+    if (
+      req.body.name &&
+      req.body.bookName &&
+      req.body.username &&
+      req.body.relateTo &&
+      req.body.type &&
+      req.body.typeRelateTo
+    ) {
+      modelEntity.findOne(
+        {
+          name: req.body.name,
+          bookName: req.body.bookName,
+          username: req.body.username,
+          type: req.body.type,
+        },
+        (err, entity) => {
+          if (err) throw err;
+          entity.relations.push({
+            relateTo: req.body.relateTo,
+            type: req.body.typeRelateTo,
+          });
+          entity.save();
+        }
       );
-      modelEntity.findOne({
-        name: req.body.relateTo,
-        bookName: req.body.bookName,
-        username: req.body.username,
-      }, (err, entity) => {
-        if (err) throw err;
-        entity.relations.push({
-          relateTo: req.body.name,
-          type: req.body.type
-        });
-        entity.save();
-      }
+      modelEntity.findOne(
+        {
+          name: req.body.relateTo,
+          bookName: req.body.bookName,
+          username: req.body.username,
+          type: req.body.typeRelateTo,
+        },
+        (err, entity) => {
+          if (err) throw err;
+          entity.relations.push({
+            relateTo: req.body.name,
+            type: req.body.type,
+          });
+          entity.save();
+        }
       );
       res.json({ success: true, msg: "Relation added" });
     }
   },
   deleteRelation: (req, res) => {
     modelEntity = mongoose.model("Entity", Entity);
-    if (req.body.name && req.body.bookName && req.body.username && req.body.relateTo && req.body.type && req.body.typeRelateTo) {
-      modelEntity.findOne({
-        name: req.body.name,
-        bookName: req.body.bookName,
-        username: req.body.username,
-        type: req.body.type
-      }, (err, entity) => {
-        if (err) throw err;
-        const index = entity.relations.indexOf({ relateTo: req.body.relateTo, type: req.body.typeRelateTo });
-        if (index > -1)  // only splice array when item is found
-          entity.relations.splice(index, 1); // 2nd parameter means remove one item only
-        else
-          res.json({ success: false, msg: "can't find relation" });
-        entity.save();
-      }
-      );
-      modelEntity.findOne({
-        name: req.body.relateTo,
-        bookName: req.body.bookName,
-        username: req.body.username,
-        relateTo: req.body.name,
-        type: req.body.typeRelateTo
-      }, (err, entity) => {
-        if (err) throw err;
-        const index = entity.relations.indexOf({
-          relateTo: req.body.name,
-          type: req.body.type
-        });
-        if (index > -1)  // only splice array when item is found
-          entity.relations.splice(index, 1); // 2nd parameter means remove one item only
-        else
-          res.json({ success: false, msg: "can't find relation" });
-        entity.save();
-        res.json({ success: true, msg: "Relation deleted" });
-      });
-    }
-  }
+    if (
+      req.body.name &&
+      req.body.bookName &&
+      req.body.username &&
+      req.body.relateTo &&
+      req.body.type &&
+      req.body.typeRelateTo
+    ) {
+      modelEntity.findOne(
+        {
+          name: req.body.name,
+          bookName: req.body.bookName,
+          username: req.body.username,
+          type: req.body.type,
+        },
+        (err, entity) => {
 
+          if (err) throw err;
+          const index = entity.relations.findIndex( (obj) => {
+            return obj.relateTo == req.body.relateTo && obj.type == req.body.typeRelateTo;
+          });
+          if (index > -1)
+            // only splice array when item is found
+            entity.relations.splice(
+              index,
+              1
+            ); // 2nd parameter means remove one item only
+          else {
+            res.json({ success: false, msg: "can't find relation 1" });
+            return;
+          }
+          entity.save();
+        }
+      );
+      modelEntity.findOne(
+        {
+          name: req.body.relateTo,
+          bookName: req.body.bookName,
+          username: req.body.username,
+          relateTo: req.body.name,
+          type: req.body.typeRelateTo,
+        },
+        (err, entity) => {
+          if (err) throw err;
+          const index = entity.relations.findIndex( (obj) => {
+            return obj.relateTo == req.body.name && obj.type == req.body.type;
+          });
+          if (index > -1)
+            // only splice array when item is found
+            entity.relations.splice(
+              index,
+              1
+            ); // 2nd parameter means remove one item only
+          else {
+            res.json({ success: false, msg: "can't find relation 2" });
+            return;
+          }
+          entity.save();
+          res.json({ success: true, msg: "Relation deleted" });
+        }
+      );
+    }
+  },
 };
 module.exports = functions;
