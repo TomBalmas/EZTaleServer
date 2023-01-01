@@ -181,9 +181,8 @@ var functions = {
         },
         (err, entity) => {
           if (err) throw err;
-          const index = entity.attributes.indexOf({
-            attr: req.body.attr,
-            val: req.body.val,
+        const index =  entity.attributes.findIndex( (obj) => {
+            return obj.attr == req.body.attr && obj.val == req.body.val;
           });
           if (index > -1)
             // only splice array when item is found
