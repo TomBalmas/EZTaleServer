@@ -19,7 +19,7 @@ function getIcalObjectInstance(
   const cal = ical({});
   cal.createEvent({
     start: moment(),
-    end: moment(dueDays, "days"),
+    end: moment().day(dueDays),
     summary: "You got a due time for writing",
     description: description,
     organizer: {
@@ -66,13 +66,13 @@ var functions = {
       let alternatives = {
         "Content-Type": "text/calendar",
         method: "REQUEST",
-        content: calendarObj.toString(),
+        content: calObj.toString(),
         component: "VEVENT",
         "Content-Class": "urn:content-classes:calendarmessage",
       };
       mailOptions["alternatives"] = alternatives;
       mailOptions["alternatives"]["contentType"] = "text/calendar";
-      mailOptions["alternatives"]["content"] = calendarObj.toString();
+      mailOptions["alternatives"]["content"] = calObj.toString();
     }
     smtpTransport.sendMail(mailOptions, function (error, response) {
       if (error) console.log(error);

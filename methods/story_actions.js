@@ -3,6 +3,7 @@ const Story = require("../models/story");
 const email_sender = require("./email_sender");
 const fs = require("fs");
 var randomstring = require("randomstring");
+var moment = require('moment');
 
 var functions = {
   addNewStory: (req, res) => {
@@ -239,7 +240,8 @@ var functions = {
           if (err) throw err;
           book.deadLines.push({
             coUsername: req.body.coUsername,
-            deadLine: moment().add(parseInt(req.body.deadLine), "days"),
+            deadLine: moment().add(parseInt(req.body.deadLine), "days").format("DD/MM/YYYY").toString(),
+            description: req.body.description
           });
           book.save();
           //sending the mail with the calandar object
@@ -257,8 +259,8 @@ var functions = {
     modelStory = mongoose.model("Story", Story);
     modelStory.findOne(
       {
-        bookName: req.headers.bookName,
-        username: req.headers.username,
+        bookName: req.body.bookName,
+        username: req.body.username,
       },
       (err, book) => {
         if (err) throw err;

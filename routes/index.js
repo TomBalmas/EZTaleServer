@@ -51,4 +51,10 @@ router.post("/deleteuser", user_actions.deleteUser);
 //@headers email
 router.post("/getuserbyemail", user_actions.getUserByEmail);
 
+
+//@desc Get email by user
+//@route POST /getEmailByUsername
+//@headers username
+router.post("/getEmailByUsername", user_actions.getEmailByUsername);
+
 module.exports = router;

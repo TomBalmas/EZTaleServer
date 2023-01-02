@@ -44,9 +44,9 @@ router.post("/getCoWriters", story_actions.getCowriters);
 router.post("/addDeadline", story_actions.addDeadLine);
 
 //desc get the deadline list
-//@route GET /story/getDeadlines
+//@route POST /story/getDeadlines
 //@body username bookName
-router.get("/getDeadlines", story_actions.getDeadLines);
+router.post("/getDeadlines", story_actions.getDeadLines);
 
 //desc get the co stories
 //@route POST /story/getCoStories
