@@ -194,12 +194,13 @@ var functions = {
   },
   getEntity: (req, res) => {
     modelEntity = mongoose.model("Entity", Entity);
-    if (req.body.name && req.body.bookName && req.body.username)
+    if (req.body.name && req.body.bookName && req.body.username && req.body.type)
       modelEntity.findOne(
         {
           bookName: req.body.bookName,
           username: req.body.username,
           name: req.body.name,
+          type: req.body.type
         },
         function (err, ent) {
           if (err) throw err;
@@ -266,12 +267,13 @@ var functions = {
   },
   deleteEntity: (req, res) => {
     modelEntity = mongoose.model("Entity", Entity);
-    if (req.body.name && req.body.bookName && req.body.username) {
+    if (req.body.name && req.body.bookName && req.body.username && req.body.type) {
       modelEntity.deleteOne(
         {
           name: req.body.name,
           bookName: req.body.bookName,
           username: req.body.username,
+          type: req.body.type
         },
         (err) => {
           if (err) throw err;

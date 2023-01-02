@@ -10,7 +10,7 @@ router.post("/addentity", entity_actions.addEntity);
 
 //@desc Get Entity
 //@route POST /entity/getentity
-//@headers name, book username
+//@headers name, book username type
 router.post("/getentity", entity_actions.getEntity);
 
 //@desc Get All Book entities
@@ -25,7 +25,7 @@ router.post("/getalltype", entity_actions.getAllTypeEntities);
 
 //desc delete entity
 //@route POST /entity/deleteentity
-//@headers bookName username name
+//@headers bookName username name type
 router.post("/deleteentity", entity_actions.deleteEntity);
 
 //desc edit entity
