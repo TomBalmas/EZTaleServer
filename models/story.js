@@ -24,6 +24,10 @@ var storySchema = new Schema({
   deadLines:{
     type:Array,
     required: false
+  },
+  marges:{
+    type:Array,
+    required: false
   }
 });
 

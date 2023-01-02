@@ -78,6 +78,16 @@ router.post("/getnumberofpages", story_actions.getNumberOfPages);
 //@body inviteCode coUsername
 router.post("/acceptInvitationAddBook", story_actions.acceptInvitationAddBook);
 
+//desc add marge request from co writer
+//@route POST /story/addMargeRequest
+//@body username(owner) bookName coUsername
+router.post("/addMargeRequest", story_actions.addMargeRequest);
+
+//desc mark a marge request as unmarged for letting the coWriter make changes
+//@route POST /story/markMargeAsUnmarged
+//@body username(owner) bookName coUsername
+router.post("/markMargeAsUnmarged", story_actions.markMargeAsUnmarged);
+
 
 
 module.exports = router;

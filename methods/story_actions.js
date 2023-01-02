@@ -3,7 +3,7 @@ const Story = require("../models/story");
 const email_sender = require("./email_sender");
 const fs = require("fs");
 var randomstring = require("randomstring");
-var moment = require('moment');
+var moment = require("moment");
 
 var functions = {
   addNewStory: (req, res) => {
@@ -16,6 +16,7 @@ var functions = {
       type: req.body.type,
       coWriters: [],
       deadLines: [],
+      marges: [],
     });
     modelStory.findOne(
       {
@@ -240,8 +241,11 @@ var functions = {
           if (err) throw err;
           book.deadLines.push({
             coUsername: req.body.coUsername,
-            deadLine: moment().add(parseInt(req.body.deadLine), "days").format("DD/MM/YYYY").toString(),
-            description: req.body.description
+            deadLine: moment()
+              .add(parseInt(req.body.deadLine), "days")
+              .format("DD/MM/YYYY")
+              .toString(),
+            description: req.body.description,
           });
           book.save();
           //sending the mail with the calandar object
@@ -403,13 +407,25 @@ var functions = {
       }
       for (var i = continueOldPage; i <= numOfTotalPages; i++)
         newBook[i] = book[i - Object.keys(margeBook).length];
-      json = JSON.stringify(newBook);
+      json = JSON.stringify(newBook); 
+     
       fs.writeFile(storyPath, json, "utf8", (err) => {
         if (err) throw err;
-        res.json({ success: true, msg: "marge saved successfully" });
+        modelStory.updateOne(
+          { "merges.coUsername": req.body.coUsername },
+          { $set: { "merges.$.accepted": true } },
+          (error) => {
+            if (error)
+              res.json({ success: false, msg: "Marge request not found!" });
+            else {
+                fs.writeFileSync(margeBook,"{}"); // clear the marge file for next marge
+                res.json({ success: true, msg: "marge saved successfully" });
+            };
+          }
+        );
       });
     }
-  }, //TODO: add to co writer marge request
+  },
   acceptInvitationAddBook: (req, res) => {
     if (req.body.inviteCode && req.body.coUsername) {
       suc = false;
@@ -428,7 +444,6 @@ var functions = {
       );
     }
   },
-
   getNumberOfPages: (req, res) => {
     //TEST!
     if (req.body.username && req.body.bookName) {
@@ -440,6 +455,41 @@ var functions = {
       else res.json({ success: false, msg: "book not found" });
       res.json({ success: true, msg: `${Object.keys(book).length}` });
     }
+  },
+  addMargeRequest: (req, res) => {
+    modelStory = mongoose.model("Story", Story);
+    if (req.body.username && req.body.bookName && req.body.coUsername) {
+      modelStory.findOne(
+        {
+          bookName: req.body.bookName,
+          username: req.body.username,
+        },
+        (err, book) => {
+          if (err) throw err;
+          book.marges.push({
+            coUsername: req.body.coUsername,
+            accepted: false,
+          });
+          book.save();
+          res.json({
+            success: true,
+            msg: `coWriter ${req.body.coUsername} marge requested to book ${req.body.bookName}`,
+          });
+        }
+      );
+    }
+  },
+  // in case marge not confirmed or the cowriter want to send another request
+  markMargeAsUnmarged: (req, res) => {
+    modelStory.updateOne(
+      { "merges.coUsername": req.body.coUsername },
+      { $set: { "merges.$.accepted": false } },
+      (error) => {
+        if (error)
+          res.json({ success: false, msg: "Marge request not found!" });
+        else res.json({ success: true, msg: "marge unmarked successfully" });
+      }
+    );
   },
 };
 
