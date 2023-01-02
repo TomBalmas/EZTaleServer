@@ -481,15 +481,52 @@ var functions = {
   },
   // in case marge not confirmed or the cowriter want to send another request
   markMargeAsUnmarged: (req, res) => {
-    modelStory.updateOne(
-      { "merges.coUsername": req.body.coUsername },
-      { $set: { "merges.$.accepted": false } },
-      (error) => {
-        if (error)
-          res.json({ success: false, msg: "Marge request not found!" });
-        else res.json({ success: true, msg: "marge unmarked successfully" });
-      }
-    );
+    if (req.body.coUsername && req.body.username && req.body.bookName) {
+      modelStory = mongoose.model("Story", Story);
+      modelStory.updateOne(
+        {
+          suername: req.body.username,
+          bookName: req.body.bookName,
+          "merges.coUsername": req.body.coUsername
+        },
+        { $set: { "merges.$.accepted": false } },
+        (error) => {
+          if (error)
+            res.json({ success: false, msg: "Marge request not found!" });
+          else res.json({ success: true, msg: "marge unmarked successfully" });
+        }
+      );
+    }
+  },
+  deleteMargeRequest: (req, res) => {
+    modelStory = mongoose.model("Story", Story);
+    if (req.body.coUsername && req.body.username && req.body.bookName) {
+      modelStory.findOne(
+        {
+          bookName: req.body.bookName,
+          username: req.body.username,
+        },
+        (err, book) => {
+          if (err) throw err;
+          const index = book.marges.findIndex((obj) => {
+            return (
+              obj.coUsername == req.body.coUsername &&
+              !obj.accepted
+            );
+          });
+          if (index > -1)
+            // only splice array when item is found
+            book.marges.splice(index, 1);
+          // 2nd parameter means remove one item only
+          else {
+            res.json({ success: false, msg: "can't find request" });
+            return;
+          }
+          book.save();
+          res.json({ success: true, msg: "request deleted" });
+        }
+      );
+    }
   },
   getMargeRequests: (req, res) => {
     modelStory = mongoose.model("Story", Story);

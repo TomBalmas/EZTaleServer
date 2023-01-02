@@ -93,6 +93,11 @@ router.post("/markMargeAsUnmarged", story_actions.markMargeAsUnmarged);
 //@body username(owner) bookName
 router.post("/getMargeRequests", story_actions.getMargeRequests);
 
+//desc delete marge request
+//@route POST /story/deleteMargeRequest
+//@body username(owner) bookName coUsername
+router.post("/deleteMargeRequest", story_actions.deleteMargeRequest);
+
 
 
 
