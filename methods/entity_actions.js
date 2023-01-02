@@ -288,7 +288,7 @@ var functions = {
       req.body.username &&
       req.body.relateTo &&
       req.body.type &&
-      req.body.typeRelateTo
+      req.body.relateToType
     ) {
       modelEntity.findOne(
         {
@@ -301,7 +301,7 @@ var functions = {
           if (err) throw err;
           entity.relations.push({
             relateTo: req.body.relateTo,
-            type: req.body.typeRelateTo,
+            relateToType: req.body.relateToType,
           });
           entity.save();
         }
@@ -311,13 +311,13 @@ var functions = {
           name: req.body.relateTo,
           bookName: req.body.bookName,
           username: req.body.username,
-          type: req.body.typeRelateTo,
+          type: req.body.relateToType,
         },
         (err, entity) => {
           if (err) throw err;
           entity.relations.push({
             relateTo: req.body.name,
-            type: req.body.type,
+            relateToType: req.body.type,
           });
           entity.save();
         }
@@ -333,7 +333,7 @@ var functions = {
       req.body.username &&
       req.body.relateTo &&
       req.body.type &&
-      req.body.typeRelateTo
+      req.body.relateToType
     ) {
       modelEntity.findOne(
         {
@@ -346,7 +346,7 @@ var functions = {
 
           if (err) throw err;
           const index = entity.relations.findIndex( (obj) => {
-            return obj.relateTo == req.body.relateTo && obj.type == req.body.typeRelateTo;
+            return obj.relateTo == req.body.relateTo && obj.relateToType == req.body.relateToType;
           });
           if (index > -1)
             // only splice array when item is found
@@ -367,12 +367,12 @@ var functions = {
           bookName: req.body.bookName,
           username: req.body.username,
           relateTo: req.body.name,
-          type: req.body.typeRelateTo,
+          type: req.body.relateToType,
         },
         (err, entity) => {
           if (err) throw err;
           const index = entity.relations.findIndex( (obj) => {
-            return obj.relateTo == req.body.name && obj.type == req.body.type;
+            return obj.relateTo == req.body.name && obj.relateToType == req.body.type;
           });
           if (index > -1)
             // only splice array when item is found
