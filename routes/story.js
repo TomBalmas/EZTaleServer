@@ -88,6 +88,12 @@ router.post("/addMargeRequest", story_actions.addMargeRequest);
 //@body username(owner) bookName coUsername
 router.post("/markMargeAsUnmarged", story_actions.markMargeAsUnmarged);
 
+//desc get marge requests
+//@route POST /story/getMargeRequests
+//@body username(owner) bookName
+router.post("/getMargeRequests", story_actions.getMargeRequests);
+
+
 
 
 module.exports = router;

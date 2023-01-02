@@ -407,8 +407,8 @@ var functions = {
       }
       for (var i = continueOldPage; i <= numOfTotalPages; i++)
         newBook[i] = book[i - Object.keys(margeBook).length];
-      json = JSON.stringify(newBook); 
-     
+      json = JSON.stringify(newBook);
+
       fs.writeFile(storyPath, json, "utf8", (err) => {
         if (err) throw err;
         modelStory.updateOne(
@@ -418,9 +418,9 @@ var functions = {
             if (error)
               res.json({ success: false, msg: "Marge request not found!" });
             else {
-                fs.writeFileSync(margeBook,"{}"); // clear the marge file for next marge
-                res.json({ success: true, msg: "marge saved successfully" });
-            };
+              fs.writeFileSync(margeBook, "{}"); // clear the marge file for next marge
+              res.json({ success: true, msg: "marge saved successfully" });
+            }
           }
         );
       });
@@ -490,6 +490,20 @@ var functions = {
         else res.json({ success: true, msg: "marge unmarked successfully" });
       }
     );
+  },
+  getMargeRequests: (req, res) => {
+    modelStory = mongoose.model("Story", Story);
+    if (req.body.username && req.body.bookName)
+      modelStory.findOne(
+        {
+          bookName: req.body.bookName,
+          username: req.body.username,
+        },
+        (err, book) => {
+          if (err) throw err;
+          res.json(book.merges);
+        }
+      );
   },
 };
 
