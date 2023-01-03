@@ -73,6 +73,11 @@ router.post("/acceptMergeRequest", story_actions.acceptMergeRequest);
 //@body username bookName
 router.post("/getnumberofpages", story_actions.getNumberOfPages);
 
+//desc get pages number of story
+//@route POST /story/getCowtiternumberofpages
+//@body username bookName coUsername
+router.post("/getCowtiternumberofpages", story_actions.getCowtiternumberofpages);
+
 //desc accept invitation 
 //@route POST /story/acceptInvitationAddBook
 //@body inviteCode coUsername

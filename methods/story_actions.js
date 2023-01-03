@@ -444,11 +444,27 @@ var functions = {
     }
   },
   getNumberOfPages: (req, res) => {
-    //TEST!
     if (req.body.username && req.body.bookName) {
       var book;
       var storyPath =
         "./stories/" + req.body.username + "/" + req.body.bookName + ".json";
+      if (fs.existsSync(storyPath))
+        book = JSON.parse(fs.readFileSync(storyPath));
+      else res.json({ success: false, msg: "book not found" });
+      res.json({ success: true, msg: `${Object.keys(book).length}` });
+    }
+  },
+  getCowtiternumberofpages:(req, res)=> { 
+    if (req.body.username && req.body.bookName && req.body.coUsername) {
+      var book;
+      var storyPath =
+      "./stories/" +
+      req.body.username +
+      "/" +
+      req.body.bookName +
+      "_" +
+      req.body.coUsername +
+      ".json";
       if (fs.existsSync(storyPath))
         book = JSON.parse(fs.readFileSync(storyPath));
       else res.json({ success: false, msg: "book not found" });
