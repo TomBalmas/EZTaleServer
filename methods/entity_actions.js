@@ -100,7 +100,7 @@ var functions = {
           attributes: {
             type: Array,
             required: false,
-          },
+          }
         });
         var newEntity = modelEntity({
           username: req.body.username,
@@ -116,7 +116,7 @@ var functions = {
           attributes: {
             type: Array,
             required: false,
-          },
+          }
         });
         var newEntity = modelEntity({
           username: req.body.username,
@@ -135,6 +135,12 @@ var functions = {
     else res.json({ success: false, msg: "Failed to save no entity created" });
   },
   addAttribute: (req, res) => {
+    Entity.add({
+      attributes: {
+        type: Array,
+        required: false,
+      }
+    });
     modelEntity = mongoose.model("Entity", Entity);
     if (
       req.body.name &&
@@ -149,20 +155,27 @@ var functions = {
           name: req.body.name,
           bookName: req.body.bookName,
           username: req.body.username,
-          type: req.body.type,
+          type: req.body.type
         },
         (err, entity) => {
           if (err) throw err;
           entity.attributes.push({
             attr: req.body.attr,
-            val: req.body.val,
+            val: req.body.val
           });
           entity.save();
+          res.json({ success: true, msg: "attribute added" });
         }
       );
     }
   },
   deleteAttribute: (req, res) => {
+    Entity.add({
+      attributes: {
+        type: Array,
+        required: false,
+      }
+    });
     modelEntity = mongoose.model("Entity", Entity);
     if (
       req.body.name &&
@@ -181,13 +194,14 @@ var functions = {
         },
         (err, entity) => {
           if (err) throw err;
-        const index =  entity.attributes.findIndex( (obj) => {
+          const index = entity.attributes.findIndex((obj) => {
             return obj.attr == req.body.attr && obj.val == req.body.val;
           });
           if (index > -1)
             // only splice array when item is found
             entity.attributes.splice(index, 1);
           entity.save();
+          res.json({ success: true, msg: "attribute deleted" })
         }
       );
     }
@@ -347,7 +361,7 @@ var functions = {
         (err, entity) => {
 
           if (err) throw err;
-          const index = entity.relations.findIndex( (obj) => {
+          const index = entity.relations.findIndex((obj) => {
             return obj.relateTo == req.body.relateTo && obj.relateToType == req.body.relateToType;
           });
           if (index > -1)
@@ -373,7 +387,7 @@ var functions = {
         },
         (err, entity) => {
           if (err) throw err;
-          const index = entity.relations.findIndex( (obj) => {
+          const index = entity.relations.findIndex((obj) => {
             return obj.relateTo == req.body.name && obj.relateToType == req.body.type;
           });
           if (index > -1)
