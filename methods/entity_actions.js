@@ -108,7 +108,7 @@ var functions = {
           type: req.body.type,
           name: req.body.name,
           relations: req.body.relations,
-          attributes: req.body.attributes,
+          attributes: JSON.parse(req.body.attributes),
         });
         break;
       case "userDefined":
@@ -124,7 +124,7 @@ var functions = {
           type: req.body.type,
           name: req.body.name,
           relations: req.body.relations,
-          attributes: req.body.attributes,
+          attributes: JSON.parse(req.body.attributes),
         });
     }
     if (newEntity)
