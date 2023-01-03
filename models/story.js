@@ -25,7 +25,7 @@ var storySchema = new Schema({
     type:Array,
     required: false
   },
-  marges:{
+  merges:{
     type:Array,
     required: false
   }

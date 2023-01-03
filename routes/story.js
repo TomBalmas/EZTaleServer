@@ -63,7 +63,7 @@ router.post("/saveCowriterPage", story_actions.saveCowriterPage);
 //@body username
 router.post("/getCowriterPage", story_actions.getCowriterPage);
 
-//desc accepting a marge request
+//desc accepting a merge request
 //@route POST /story/acceptMergeRequest
 //@body username bookName coUsername page
 router.post("/acceptMergeRequest", story_actions.acceptMergeRequest);
@@ -78,25 +78,25 @@ router.post("/getnumberofpages", story_actions.getNumberOfPages);
 //@body inviteCode coUsername
 router.post("/acceptInvitationAddBook", story_actions.acceptInvitationAddBook);
 
-//desc add marge request from co writer
-//@route POST /story/addMargeRequest
+//desc add merge request from co writer
+//@route POST /story/addMergeRequest
 //@body username(owner) bookName coUsername
-router.post("/addMargeRequest", story_actions.addMargeRequest);
+router.post("/addMergeRequest", story_actions.addMergeRequest);
 
-//desc mark a marge request as unmarged for letting the coWriter make changes
-//@route POST /story/markMargeAsUnmarged
+//desc mark a merge request as unmerged for letting the coWriter make changes
+//@route POST /story/markMergeAsUnmerged
 //@body username(owner) bookName coUsername
-router.post("/markMargeAsUnmarged", story_actions.markMargeAsUnmarged);
+router.post("/markMergeAsUnmerged", story_actions.markMergeAsUnmerged);
 
-//desc get marge requests
-//@route POST /story/getMargeRequests
+//desc get merge requests
+//@route POST /story/getMergeRequests
 //@body username(owner) bookName
-router.post("/getMargeRequests", story_actions.getMargeRequests);
+router.post("/getMergeRequests", story_actions.getMergeRequests);
 
-//desc delete marge request
-//@route POST /story/deleteMargeRequest
+//desc delete merge request
+//@route POST /story/deleteMergeRequest
 //@body username(owner) bookName coUsername
-router.post("/deleteMargeRequest", story_actions.deleteMargeRequest);
+router.post("/deleteMergeRequest", story_actions.deleteMergeRequest);
 
 
 

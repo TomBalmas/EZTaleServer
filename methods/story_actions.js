@@ -16,7 +16,7 @@ var functions = {
       type: req.body.type,
       coWriters: [],
       deadLines: [],
-      marges: [],
+      merges: [],
     });
     modelStory.findOne(
       {
@@ -368,7 +368,6 @@ var functions = {
     }
   },
   acceptMergeRequest: (req, res) => {
-    //TODO: add find delete request //TEST!
     if (
       req.body.username &&
       req.body.bookName &&
@@ -377,7 +376,7 @@ var functions = {
     ) {
       var storyPath =
         "./stories/" + req.body.username + "/" + req.body.bookName + ".json";
-      var margePath =
+      var mergePath =
         "./stories/" +
         req.body.username +
         "/" +
@@ -386,27 +385,27 @@ var functions = {
         req.body.coUsername +
         ".json";
       var book;
-      var margeBook;
+      var mergeBook;
       var newBook = {};
-      if (fs.existsSync(storyPath) && fs.existsSync(margePath)) {
+      if (fs.existsSync(storyPath) && fs.existsSync(mergePath)) {
         book = JSON.parse(fs.readFileSync(storyPath));
-        margeBook = JSON.parse(fs.readFileSync(margePath));
+        mergeBook = JSON.parse(fs.readFileSync(mergePath));
       }
       for (var i = 1; i < parseInt(req.body.page); i++) newBook[i] = book[i];
       var numOfTotalPages =
-        Object.keys(book).length + Object.keys(margeBook).length;
+        Object.keys(book).length + Object.keys(mergeBook).length;
       var continueOldPage =
-        Object.keys(margeBook).length + parseInt(req.body.page);
+        Object.keys(mergeBook).length + parseInt(req.body.page);
       for (
         var i = parseInt(req.body.page);
-        i < Object.keys(margeBook).length + parseInt(req.body.page);
+        i < Object.keys(mergeBook).length + parseInt(req.body.page);
         i++
       ) {
         var newPage = i - parseInt(req.body.page) + 1;
-        newBook[i] = margeBook[newPage];
+        newBook[i] = mergeBook[newPage];
       }
       for (var i = continueOldPage; i <= numOfTotalPages; i++)
-        newBook[i] = book[i - Object.keys(margeBook).length];
+        newBook[i] = book[i - Object.keys(mergeBook).length];
       json = JSON.stringify(newBook);
 
       fs.writeFile(storyPath, json, "utf8", (err) => {
@@ -416,10 +415,10 @@ var functions = {
           { $set: { "merges.$.accepted": true } },
           (error) => {
             if (error)
-              res.json({ success: false, msg: "Marge request not found!" });
+              res.json({ success: false, msg: "Merge request not found!" });
             else {
-              fs.writeFileSync(margeBook, "{}"); // clear the marge file for next marge
-              res.json({ success: true, msg: "marge saved successfully" });
+              fs.writeFileSync(mergeBook, "{}"); // clear the merge file for next merge
+              res.json({ success: true, msg: "merge saved successfully" });
             }
           }
         );
@@ -456,7 +455,7 @@ var functions = {
       res.json({ success: true, msg: `${Object.keys(book).length}` });
     }
   },
-  addMargeRequest: (req, res) => {
+  addMergeRequest: (req, res) => {
     modelStory = mongoose.model("Story", Story);
     if (req.body.username && req.body.bookName && req.body.coUsername) {
       modelStory.findOne(
@@ -466,21 +465,21 @@ var functions = {
         },
         (err, book) => {
           if (err) throw err;
-          book.marges.push({
+          book.merges.push({
             coUsername: req.body.coUsername,
             accepted: false,
           });
           book.save();
           res.json({
             success: true,
-            msg: `coWriter ${req.body.coUsername} marge requested to book ${req.body.bookName}`,
+            msg: `coWriter ${req.body.coUsername} merge requested to book ${req.body.bookName}`,
           });
         }
       );
     }
   },
-  // in case marge not confirmed or the cowriter want to send another request
-  markMargeAsUnmarged: (req, res) => {
+  // in case merge not confirmed or the cowriter want to send another request
+  markMergeAsUnmerged: (req, res) => {
     if (req.body.coUsername && req.body.username && req.body.bookName) {
       modelStory = mongoose.model("Story", Story);
       modelStory.updateOne(
@@ -492,13 +491,13 @@ var functions = {
         { $set: { "merges.$.accepted": false } },
         (error) => {
           if (error)
-            res.json({ success: false, msg: "Marge request not found!" });
-          else res.json({ success: true, msg: "marge unmarked successfully" });
+            res.json({ success: false, msg: "Merge request not found!" });
+          else res.json({ success: true, msg: "merge unmarked successfully" });
         }
       );
     }
   },
-  deleteMargeRequest: (req, res) => {
+  deleteMergeRequest: (req, res) => {
     modelStory = mongoose.model("Story", Story);
     if (req.body.coUsername && req.body.username && req.body.bookName) {
       modelStory.findOne(
@@ -508,7 +507,7 @@ var functions = {
         },
         (err, book) => {
           if (err) throw err;
-          const index = book.marges.findIndex((obj) => {
+          const index = book.merges.findIndex((obj) => {
             return (
               obj.coUsername == req.body.coUsername &&
               !obj.accepted
@@ -516,7 +515,7 @@ var functions = {
           });
           if (index > -1)
             // only splice array when item is found
-            book.marges.splice(index, 1);
+            book.merges.splice(index, 1);
           // 2nd parameter means remove one item only
           else {
             res.json({ success: false, msg: "can't find request" });
@@ -528,7 +527,7 @@ var functions = {
       );
     }
   },
-  getMargeRequests: (req, res) => {
+  getMergeRequests: (req, res) => {
     modelStory = mongoose.model("Story", Story);
     if (req.body.username && req.body.bookName)
       modelStory.findOne(
