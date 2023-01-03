@@ -44,9 +44,9 @@ router.post("/addrelation", entity_actions.addRelation);
 router.post("/deleterelation", entity_actions.deleteRelation);
 
 //desc add attribute to userdefined and attribute template
-//@route POST /entity/addatribute
+//@route POST /entity/addattribute
 //@body bookName username name attr val type
-router.post("/addatribute", entity_actions.addAttribute);
+router.post("/addattribute", entity_actions.addAttribute);
 
 //desc delete attribute from userdefined and attribute template
 //@route POST /entity/deleteattribute
