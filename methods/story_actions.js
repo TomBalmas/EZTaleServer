@@ -417,7 +417,6 @@ var functions = {
             if (error)
               res.json({ success: false, msg: "Merge request not found!" });
             else {
-              fs.writeFileSync(mergeBook, "{}"); // clear the merge file for next merge
               res.json({ success: true, msg: "merge saved successfully" });
             }
           }
