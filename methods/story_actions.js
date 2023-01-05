@@ -361,13 +361,14 @@ var functions = {
           if (err) throw err;
           obj = JSON.parse(data); //now it an object
           var con = obj[req.body.page];
-          if (!con) res.json({ success: false, content: "not such page" });
+          if (!con) res.json({ success: false, content: " " });
           else res.json({ success: true, content: con });
         });
       }
     }
   },
   acceptMergeRequest: (req, res) => {
+    modelStory = mongoose.model("Story", Story);
     if (
       req.body.username &&
       req.body.bookName &&
@@ -411,7 +412,11 @@ var functions = {
       fs.writeFile(storyPath, json, "utf8", (err) => {
         if (err) throw err;
         modelStory.updateOne(
-          { "merges.coUsername": req.body.coUsername },
+          {
+            'username': req.body.username,
+            'bookName': req.body.bookName,
+            "merges.coUsername": req.body.coUsername
+          },
           { $set: { "merges.$.accepted": true } },
           (error) => {
             if (error)
@@ -453,17 +458,17 @@ var functions = {
       res.json({ success: true, msg: `${Object.keys(book).length}` });
     }
   },
-  getCowtiternumberofpages:(req, res)=> { 
+  getCowtiternumberofpages: (req, res) => {
     if (req.body.username && req.body.bookName && req.body.coUsername) {
       var book;
       var storyPath =
-      "./stories/" +
-      req.body.username +
-      "/" +
-      req.body.bookName +
-      "_" +
-      req.body.coUsername +
-      ".json";
+        "./stories/" +
+        req.body.username +
+        "/" +
+        req.body.bookName +
+        "_" +
+        req.body.coUsername +
+        ".json";
       if (fs.existsSync(storyPath))
         book = JSON.parse(fs.readFileSync(storyPath));
       else res.json({ success: false, msg: "book not found" });
