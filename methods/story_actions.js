@@ -42,7 +42,7 @@ var functions = {
           let direcoryPath = "./stories/" + req.body.username;
           if (!fs.existsSync(direcoryPath)) fs.mkdirSync(direcoryPath);
           if (fs.existsSync(direcoryPath))
-            fs.writeFile(filePath, "{}", function (err) {
+            fs.writeFile(filePath, '{"1":""}', function (err) {
               if (err)
                 res.json({
                   success: false,
@@ -86,7 +86,7 @@ var functions = {
           if (err) throw err;
           obj = JSON.parse(data); //now it an object
           var con = obj[req.body.page];
-          if (!con) res.json({ success: false, content: "not such page" });
+          if (!con) res.json({ success: false, content: " " });
           else res.json({ success: true, content: con });
         });
       }
