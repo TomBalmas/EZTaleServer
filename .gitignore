@@ -4,3 +4,7 @@
 # ignore ALL modules files  and package-lock json file
 node_modules/
 package-lock.json
+stories/*
+stories/abcd/sdfgdfger.json
+package-lock.json
+package-lock.json
