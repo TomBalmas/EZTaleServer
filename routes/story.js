@@ -103,6 +103,11 @@ router.post("/getMergeRequests", story_actions.getMergeRequests);
 //@body username(owner) bookName coUsername
 router.post("/deleteMergeRequest", story_actions.deleteMergeRequest);
 
+//desc check if merge accepted
+//@route POST /story/checkMergeAccepted
+//@body username(owner) bookName coUsername
+router.post("/checkMergeAccepted", story_actions.checkMergeAccepted);
+
 
 
 

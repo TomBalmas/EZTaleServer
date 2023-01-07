@@ -561,6 +561,28 @@ var functions = {
         }
       );
   },
+  checkMergeAccepted: (req,res) => {
+    modelStory = mongoose.model("Story", Story);
+    
+    if (req.body.username && req.body.bookName && req.body.coUsername)
+      modelStory.findOne(
+        {
+          bookName: req.body.bookName,
+          username: req.body.username,
+        },
+        (err, book) => {
+          if (err) throw err;
+          var isAccepted = false;
+          for(var merge of book.merges )
+            if(merge.coUsername == req.body.coUsername )
+              isAccepted = true;
+          if(isAccepted)
+            res.json({success:true, msg:'found'});
+            else 
+            res.json({success:true, msg:'not found'});
+        }
+      );
+  }
 };
 
 module.exports = functions;
